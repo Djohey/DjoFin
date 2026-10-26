@@ -114,3 +114,4 @@ st.subheader('Sauvegarde des simulations')
 st.caption('Les transactions et sauvegardes seront activées dans une prochaine version, avec des règles RLS propres à chaque utilisateur. Aucun ordre réel.')
 st.info('Portefeuille en lecture seule : aucune écriture n’est effectuée dans cette version.')
 st.caption(f"Dernière séance disponible : {df.index[-1].strftime('%d/%m/%Y')}. Source expérimentale : yfinance ; cours potentiellement retardés ou incomplets. Usage personnel et éducatif.")
+
