@@ -100,7 +100,52 @@ start_price = float(close.iloc[0])
 value = capital * last / start_price
 st.metric("Valeur théorique de cette position", f"{value:,.2f} {currency}", f"{value - capital:+,.2f} {currency}")
 st.warning("Les actifs USD sont calculés en USD : 1 000 unités fictives en USD, pas 1 000 € convertis. Les performances passées ne préjugent pas des performances futures.")
+# ==========================================
+# DJOFIN V0.5 - PORTEFEUILLE FICTIF
+# ==========================================
 
+st.subheader("Mon portefeuille DjoFin")
+st.caption("Portefeuille fictif enregistré dans Supabase.")
+
+if client is not None:
+    try:
+        response = (
+            client.table("portfolio")
+            .select("id,name,initial_capital,cash_balance,currency")
+            .eq("id", 1)
+            .limit(1)
+            .execute()
+        )
+
+        if response.data:
+            portfolio = response.data[0]
+
+            st.success("Portefeuille récupéré depuis Supabase !")
+
+            col1, col2 = st.columns(2)
+
+            col1.metric(
+                "Capital initial",
+                f"{float(portfolio['initial_capital']):,.2f} {portfolio['currency']}"
+            )
+
+            col2.metric(
+                "Liquidités disponibles",
+                f"{float(portfolio['cash_balance']):,.2f} {portfolio['currency']}"
+            )
+
+            st.write("Portefeuille :", portfolio["name"])
+
+        else:
+            st.warning("Aucun portefeuille accessible.")
+
+    except Exception:
+        st.error(
+            "Impossible de lire le portefeuille. "
+            "Vérifie les autorisations Supabase."
+        )
+else:
+    st.warning("Connexion Supabase indisponible.")
 st.subheader("Sauvegarde des simulations")
 st.caption("Les écritures seront activées après création d'une table dédiée et de règles RLS adaptées à un utilisateur authentifié. Aucun accès public en écriture.")
 if client is None:
