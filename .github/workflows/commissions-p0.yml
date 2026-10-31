@@ -29,3 +29,5 @@ jobs:
           name: DjoFin_16_simulations_commissions
           path: sortie/
           if-no-files-found: error
+
+# Relance après correction du moteur de frais
