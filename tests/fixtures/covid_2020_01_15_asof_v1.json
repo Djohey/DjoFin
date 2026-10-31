@@ -1,0 +1,50 @@
+{
+  "case_id": "respiratory_outbreak_2020",
+  "cutoff_utc": "2020-01-15T00:00:00Z",
+  "status": "candidate_not_yet_verified_for_full_point_in_time",
+  "analyst_sources": [
+    {
+      "source_id": "who_2020_01_05",
+      "published_utc": "2020-01-05T23:59:59Z",
+      "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229",
+      "observations": [
+        "WHO reports 44 pneumonia cases of unknown cause in Wuhan as of 3 January, 11 severe.",
+        "Cause unconfirmed at publication; no clear evidence of substantial person-to-person transmission in preliminary reporting.",
+        "WHO advises against travel and trade restrictions based on then available information."
+      ]
+    },
+    {
+      "source_id": "ecdc_2020_01_09",
+      "published_utc": "2020-01-09T23:59:59Z",
+      "url": "https://www.ecdc.europa.eu/en/publications-data/pneumonia-cases-possibly-associated-novel-coronavirus-wuhan-china",
+      "observations": [
+        "ECDC reports 59 possible cases between 31 December and 5 January.",
+        "ECDC considers importation risk to Europe low but not zero; notes limited evidence."
+      ]
+    },
+    {
+      "source_id": "who_2020_01_12",
+      "published_utc": "2020-01-12T23:59:59Z",
+      "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON233/",
+      "observations": [
+        "WHO reports 41 confirmed cases and one death, with a novel coronavirus identified.",
+        "No clear evidence of human-to-human transmission at publication; genetic sequence shared on 12 January."
+      ]
+    }
+  ],
+  "analyst_tasks": [
+    "List plausible public-health scenarios and uncertainty without claiming a global pandemic is certain.",
+    "Describe conditional economic transmission channels for travel, supply chains, healthcare, and market risk.",
+    "Identify missing evidence that would change the scenario probabilities."
+  ],
+  "restrictions": [
+    "No subsequent sources",
+    "No known outcome",
+    "No hindsight-derived prices or probabilities",
+    "No trading instructions"
+  ],
+  "verification_notes": [
+    "Date-only publications conservatively treated as available by 23:59:59 UTC on publication date.",
+    "Not yet a validated market-data backtest; dated price series and archival capture still required."
+  ]
+}
