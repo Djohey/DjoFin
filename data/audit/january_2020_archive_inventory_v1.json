@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "case_id": "respiratory_outbreak_2020",
+  "cutoff_utc": "2020-01-15T21:00:00Z",
+  "status": "BLOCKED_MISSING_PRE_CUTOFF_CAPTURE",
+  "candidate_archives": [
+    {
+      "source_id": "who_2020_01_05",
+      "original_url": "https://www.who.int/csr/don/05-january-2020-pneumonia-of-unkown-cause-china/en/",
+      "current_url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null
+    },
+    {
+      "source_id": "ecdc_2020_01_09",
+      "original_url": "https://www.ecdc.europa.eu/sites/default/files/documents/Threat-assessment-Pneumonia-cases-possibly-associated-to-a-novel-coronavirus-in-Wuhan-China.pdf",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null
+    },
+    {
+      "source_id": "who_2020_01_12",
+      "current_url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON233",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null
+    },
+    {
+      "source_id": "who_2020_01_13",
+      "current_url": "https://www.who.int/news-room/detail/13-01-2020-who-statement-on-novel-coronavirus-in-thailand",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null
+    },
+    {
+      "source_id": "who_2020_01_14",
+      "current_url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON234",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null
+    }
+  ],
+  "validation_rule": "No fabricated timestamps, archive hashes or historical captures. Do not copy this audit inventory into analyst packet. Verify the capture date and snapshot content before approving any item.",
+  "note": "This is a provenance backlog, not authenticated historical evidence."
+}
