@@ -1,0 +1,97 @@
+"""Tests de stratégies progressives, sans données futures."""
+from dataclasses import dataclass
+from .simulator import Bar
+import math
+
+@dataclass(frozen=True)
+class Regles:
+    mode: str = "progressif"
+    rapide: int = 20
+    lente: int = 50
+    frais: float = .001
+    capital: float = 1000
+    seuil: float = .01
+    confirmation: int = 3
+    attente: int = 10
+    objectif_vol: float = .15
+
+def comparer_regle(bars: list[Bar], r: Regles) -> dict:
+    if r.mode not in ("initial", "progressif", "volatilite", "combine"):
+        raise ValueError("Mode inconnu")
+    if not 1 <= r.rapide < r.lente or r.capital <= 0:
+        raise ValueError("Paramètres invalides")
+    if not 0 <= r.frais < 1 or not 0 <= r.seuil < 1:
+        raise ValueError("Paramètres invalides")
+    if r.confirmation < 1 or r.attente < 0 or r.objectif_vol <= 0:
+        raise ValueError("Paramètres invalides")
+    if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
+        raise ValueError("Dates invalides")
+    liquidites, parts = r.capital, 0.
+    historique, operations, decisions, valeurs = [], [], [], []
+    ordre = None
+    suite = 0
+    dernier = -100000
+    for i, b in enumerate(bars):
+        if ordre is not None and b.open is not None:
+            cible, date_signal = ordre
+            valeur = liquidites + parts * b.open
+            variation = cible * valeur - parts * b.open
+            if variation > 0.01:
+                brut = min(variation / (1 + r.frais), liquidites / (1 + r.frais))
+                if brut > .01:
+                    cout = brut * r.frais
+                    liquidites -= brut + cout
+                    parts += brut / b.open
+                    operations.append({"date": b.day, "signal": date_signal,
+                                       "sens": "achat", "frais": cout})
+                    dernier = i
+            elif variation < -.01:
+                brut = min(-variation, parts * b.open)
+                if brut > .01:
+                    cout = brut * r.frais
+                    liquidites += brut - cout
+                    parts -= brut / b.open
+                    operations.append({"date": b.day, "signal": date_signal,
+                                       "sens": "vente", "frais": cout})
+                    dernier = i
+        ordre = None
+        historique.append(b.close)
+        decision, justification = "attente", "Historique insuffisant"
+        if len(historique) >= r.lente and all(x is not None for x in historique[-r.lente:]):
+            courte = sum(historique[-r.rapide:]) / r.rapide
+            longue = sum(historique[-r.lente:]) / r.lente
+            ecart = courte / longue - 1
+            bande = 0 if r.mode in ("initial", "volatilite") else r.seuil
+            suite = suite + 1 if ecart > bande and suite >= 0 else (
+                suite - 1 if ecart < -bande and suite <= 0 else (
+                1 if ecart > bande else -1 if ecart < -bande else 0))
+            requis = 1 if r.mode in ("initial", "volatilite") else r.confirmation
+            exposition = parts * b.close / (liquidites + parts * b.close)
+            cible = None
+            if suite >= requis:
+                cible = 1. if r.mode in ("initial", "volatilite") else min(
+                    1., .10 if parts == 0 else exposition + .20)
+            elif suite <= -requis:
+                cible = 0.
+            if cible is not None and r.mode in ("volatilite", "combine"):
+                fenetre = historique[-21:]
+                ret = [math.log(fenetre[j] / fenetre[j-1]) for j in range(1,len(fenetre))]
+                if len(ret) > 1:
+                    moyenne = sum(ret) / len(ret)
+                    sigma = math.sqrt(sum((x-moyenne)**2 for x in ret)/(len(ret)-1)*252)
+                    if sigma > 0:
+                        cible = min(cible, r.objectif_vol / sigma)
+            if cible is not None and abs(cible - exposition) >= .02 and (
+                i - dernier >= (0 if r.mode == "initial" else r.attente)):
+                ordre = (cible, b.day)
+                decision = "achat" if cible > exposition else "vente"
+                justification = f"Écart des moyennes : {ecart:.5f}; cible : {cible:.3f}"
+            else:
+                justification = "Signal non confirmé ou transaction évitée"
+        decisions.append({"date": b.day, "decision": decision,
+                          "justification": justification,
+                          "information_disponible": b.day + " clôture"})
+        valeurs.append({"date": b.day, "valeur": liquidites + parts*b.close
+                        if b.close is not None else None})
+    return {"mode": r.mode, "operations": operations, "decisions": decisions,
+            "valeurs": valeurs, "capital_final": valeurs[-1]["valeur"]}
