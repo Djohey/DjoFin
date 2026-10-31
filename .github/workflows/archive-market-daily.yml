@@ -1,7 +1,7 @@
 name: Archivage quotidien des cours DjoFin
 on:
   schedule:
-    - cron: '20 7 * * 1-5'
+    - cron: '20 19 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
