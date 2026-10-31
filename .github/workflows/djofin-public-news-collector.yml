@@ -1,0 +1,42 @@
+name: DjoFin public news collector
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: djofin-public-news-collector
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: simulation-p0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Collect official public feeds
+        id: collect
+        continue-on-error: true
+        run: python scripts/collect_public_feeds.py --output data/news/news.jsonl
+      - name: Persist public news only
+        run: |
+          if [ -f data/news/news.jsonl ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/news/news.jsonl
+            if ! git diff --cached --quiet; then
+              git commit -m "data: archive official public RSS items"
+              git push origin HEAD:simulation-p0
+            fi
+          fi
+      - name: Surface feed errors
+        if: steps.collect.outcome == 'failure'
+        run: |
+          echo "One or more public feeds failed. Check collection logs." >&2
+          exit 1
