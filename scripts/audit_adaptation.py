@@ -66,6 +66,21 @@ def main():
             lines.append(f"| {nom} | {mode} | {avant['capital_final']:.2f} | "
                          f"{apres['capital_final']:.2f} | "
                          f"{apres['capital_final']-avant['capital_final']:+.2f} |")
+    lines += ["", "## Ablation independante des regles",
+              "| Bareme | Politique | Reference | Achat seul | Vente seule | Refus seul | Ensemble |",
+              "|---|---|---:|---:|---:|---:|---:|"]
+    for nom, tarif in TARIFS.items():
+        for mode in MODES:
+            base = Regles(mode=mode, tarification=tarif)
+            resultats = []
+            for achat, vente, dedup in ((False, False, False), (True, False, False),
+                                       (False, True, False), (False, False, True),
+                                       (True, True, True)):
+                regle = replace(base, adapter_achats=achat,
+                                adapter_ventes=vente, dedoublonner_refus=dedup)
+                resultats.append(comparer_regle(list(snap.bars), regle)["capital_final"])
+            lines.append("| " + nom + " | " + mode + " | " +
+                         " | ".join(f"{v:.2f}" for v in resultats) + " |")
     lines += ["", "## Références passives obligatoires",
               "| Barème | Achat-conservation (€) | 100 % liquidités (€) |",
               "|---|---:|---:|"]
