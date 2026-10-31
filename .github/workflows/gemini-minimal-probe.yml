@@ -1,0 +1,29 @@
+name: DjoFin - Gemini minimal probe (manual only)
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_free_tier:
+        description: "Type FREE_ONLY after confirming no billing is enabled"
+        required: true
+        type: string
+jobs:
+  probe:
+    if: ${{ inputs.confirm_free_tier == 'FREE_ONLY' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: simulation-p0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run one minimal generation request
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DJOFIN_FREE_TEST_APPROVED: 'YES'
+          DJOFIN_FREE_TIER_CONFIRMED: 'YES'
+        run: python -m scripts.gemini_minimal_probe
