@@ -89,7 +89,7 @@ def news():
         sha=obj["sha"]
         assert obj.get("encoding")=="base64" and isinstance(obj.get("content"),str), "GitHub omitted archive content: abort without writing"
         assert isinstance(obj.get("size"),int) and obj["size"]<900_000, "Archive approaching GitHub Contents API limit: rotate before writing"
-        raw=base64.b64decode(obj["content"],validate=True)
+        raw=base64.b64decode("".join(obj["content"].split()),validate=True)
         assert len(raw)==obj["size"], "Truncated GitHub archive: abort without writing"
         for line in raw.splitlines():
             if line.strip():
