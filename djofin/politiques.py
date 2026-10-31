@@ -46,6 +46,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
     for i, b in enumerate(bars):
         if ordre is not None and b.open is not None:
             cible, date_signal = ordre
+            cash_avant, parts_avant = liquidites, parts
             valeur = liquidites + parts * b.open
             variation = cible * valeur - parts * b.open
             tarif = r.tarification or Tarification(pourcentage=r.frais)
@@ -75,7 +76,10 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                     liquidites -= brut + cout
                     parts += brut / b.open
                     operations.append({"date": b.day, "signal": date_signal,
-                                       "sens": "achat", "frais": cout})
+                                       "sens": "achat", "frais": cout, "prix": b.open,
+                                       "brut": brut, "quantite": brut/b.open,
+                                       "cash_avant": cash_avant, "cash_apres": liquidites,
+                                       "parts_avant": parts_avant, "parts_apres": parts, "cible": cible})
                     dernier = i
                     dernier_refus = None
                 elif brut > .01:
@@ -90,7 +94,10 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                     liquidites += brut - cout
                     parts = 0.0 if cible == 0 else parts - brut / b.open
                     operations.append({"date": b.day, "signal": date_signal,
-                                       "sens": "vente", "frais": cout})
+                                       "sens": "vente", "frais": cout, "prix": b.open,
+                                       "brut": brut, "quantite": brut/b.open,
+                                       "cash_avant": cash_avant, "cash_apres": liquidites,
+                                       "parts_avant": parts_avant, "parts_apres": parts, "cible": cible})
                     dernier = i
                 elif brut > .01:
                     refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
