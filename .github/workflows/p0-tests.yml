@@ -5,18 +5,22 @@ on:
     branches: [simulation-p0]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   unittest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
-          python-version: '3.11'
+          persist-credentials: false
+      - name: Check Python environment
+        run: python3 --version
       - name: Compile simulation module
-        run: python -m py_compile djofin/simulator.py tests/test_simulator.py
+        run: python3 -m py_compile djofin/simulator.py djofin/news_triage.py djofin/evidence_ledger.py djofin/research_gate.py tests/test_simulator.py tests/test_research_gate.py
       - name: Run P0 tests
-        run: python -m unittest discover -s tests -v
+        run: python3 -m unittest discover -s tests -v
 
       - name: Compare wire formats offline (no Gemini API)
-        run: python -m scripts.compare_wire_offline
+        run: python3 -m scripts.compare_wire_offline
