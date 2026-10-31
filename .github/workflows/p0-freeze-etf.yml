@@ -18,8 +18,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install historical price downloader
-        run: python -m pip install 'yfinance>=0.2.50,<2'
+      - name: Charger les prix historiques de reference, sans dependances externes
+        run: |
+          mkdir -p output/snapshots
+          BASE=https://raw.githubusercontent.com/Djohey/DjoFin/3a98d4af14204231afe637f1267040e6380ee8eb/data/reference
+          curl --fail --silent --show-error --location "$BASE/CW8_PA_2020-01-01_2025-01-01.csv" --output output/snapshots/CW8_PA_2020-01-01_2025-01-01.csv
+          curl --fail --silent --show-error --location "$BASE/CW8_PA_2020-01-01_2025-01-01.json" --output output/snapshots/CW8_PA_2020-01-01_2025-01-01.json
+          echo "26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454  output/snapshots/CW8_PA_2020-01-01_2025-01-01.csv" | sha256sum -c -
       - name: Freeze CW8.PA EUR ETF prices for 2020-2024
         run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out output/snapshots
       - name: Upload frozen prices and provenance
