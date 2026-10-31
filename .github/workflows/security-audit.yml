@@ -1,0 +1,21 @@
+name: Audit production workflow security
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - 'scripts/audit_production_workflows.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout current production workflows without stored token
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Audit permissions and mutable refs without pip
+        run: python3 scripts/audit_production_workflows.py
