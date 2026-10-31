@@ -10,13 +10,21 @@ GEMINI_ROLE = (
     "You are a read-only analyst of PUBLIC market observations. "
     "Assess data quality and uncertainty, not investments. "
     "Do not suggest trades, change data, or request secrets. "
-    "Return strictly JSON matching the supplied response contract."
+    "Return strictly JSON matching the supplied response contract. "
+    "The JSON must have exactly schema_version, request_digest, findings, decision. "
+    "decision must equal human_review_only. Copy schema_version and request_digest "
+    "exactly from input. For each alert produce exactly one finding with keys "
+    "alert_id, category, confidence, explanation, unknowns, checks, evidence_dates. "
+    "Choose category from missing_data, price_jump, historical_revision, invalid_data, other; "
+    "confidence from low, medium, high; checks only from input allowed_checks. "
+    "Evidence dates must be taken verbatim from the matching alert dates. "
+    "Never invent sources, numbers, evidence or facts."
 )
 
 class GeminiPreparationError(ValueError):
     pass
 
-def prepare_gemini_payload(request, *, model="gemini-2.5-flash-lite"):
+def prepare_gemini_payload(request, *, model="gemini-3.5-flash-lite"):
     """Build minimal Gemini generateContent payload; does not send anything."""
     if not isinstance(model, str) or not model.startswith("gemini-"):
         raise GeminiPreparationError("Explicit Gemini model required")
