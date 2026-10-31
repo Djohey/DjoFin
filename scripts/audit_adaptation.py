@@ -66,6 +66,17 @@ def main():
             lines.append(f"| {nom} | {mode} | {avant['capital_final']:.2f} | "
                          f"{apres['capital_final']:.2f} | "
                          f"{apres['capital_final']-avant['capital_final']:+.2f} |")
+    lines += ["", "## Références passives obligatoires",
+              "| Barème | Achat-conservation (€) | 100 % liquidités (€) |",
+              "|---|---:|---:|"]
+    for nom, tarif in TARIFS.items():
+        premier = snap.bars[0].open
+        cout = 1000.0
+        from djofin.tarification import montant_achat, frais_ordre
+        brut = montant_achat(cout, tarif)
+        parts = brut / premier
+        capital_bh = (cout - brut - frais_ordre(brut, tarif)) + parts * snap.bars[-1].close
+        lines.append(f"| {nom} | {capital_bh:.2f} | 1000.00 |")
     lines += ["", "## Contrôles des frais et des risques",
               "| Barème | Politique | Frais avant | Frais après | Opérations après | Adaptations | Refus après | Repli après |",
               "|---|---|---:|---:|---:|---:|---:|---:|"]
