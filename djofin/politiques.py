@@ -54,7 +54,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                 if (r.adaptation_frais and r.mode in ("progressif", "combine")
                         and brut > .01 and frais_ordre(brut, tarif) / brut > r.seuil_frais_relatifs):
                     exposition = parts*b.open/valeur
-                    plafond = r.exposition_initiale_max if parts == 0 else min(1., exposition + .35)
+                    plafond = r.exposition_initiale_max if parts <= 1e-12 else min(1., exposition + .35)
                     budget_max = min(liquidites, max(0., plafond*valeur-parts*b.open))
                     maximum = montant_achat(budget_max, tarif)
                     if maximum > brut and frais_ordre(maximum, tarif)/maximum <= r.seuil_frais_relatifs:
@@ -98,8 +98,8 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
         historique.append(b.close)
         decision, justification = "attente", "Historique insuffisant"
         if len(historique) >= r.lente and all(x is not None for x in historique[-r.lente:]):
-            courte = sum(historique[-r.rapide:]) / r.rapide
-            longue = sum(historique[-r.lente:]) / r.lente
+            courte = math.fsum(historique[-r.rapide:]) / r.rapide
+            longue = math.fsum(historique[-r.lente:]) / r.lente
             ecart = courte / longue - 1
             bande = 0 if r.mode in ("initial", "volatilite") else r.seuil
             suite = suite + 1 if ecart > bande and suite >= 0 else (
