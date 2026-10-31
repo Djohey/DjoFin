@@ -1,6 +1,10 @@
 name: P0 - Freeze ETF historical prices
 
 on:
+  push:
+    branches: [simulation-p0]
+    paths:
+      - '.github/workflows/p0-freeze-etf.yml'
   workflow_dispatch:
 
 permissions:
