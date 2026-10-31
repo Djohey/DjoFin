@@ -39,6 +39,14 @@
       "archive_snapshot_url": null,
       "archive_captured_utc": null,
       "archive_sha256": null
+    },
+    {
+      "source_id": "ecdc_2020_01_14_update",
+      "current_url": "https://www.ecdc.europa.eu/en/news-events/update-cluster-pneumonia-cases-associated-novel-coronavirus-wuhan-china-2019",
+      "archive_snapshot_url": null,
+      "archive_captured_utc": null,
+      "archive_sha256": null,
+      "notes": "14 January contemporaneous update, 41 positives among 59 probable, Thailand imported case, flights to Paris/London/Rome. Verify historic capture."
     }
   ],
   "validation_rule": "No fabricated timestamps, archive hashes or historical captures. Do not copy this audit inventory into analyst packet. Verify the capture date and snapshot content before approving any item.",
