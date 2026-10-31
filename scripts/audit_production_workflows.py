@@ -13,7 +13,7 @@ DANGEROUS = (
     (r"(?m)^\s*persist-credentials:\s*true\s*$", "persistent checkout credentials"),
     (r"(?m)^\s*github-token:\s*\$\{\{\s*github\.token\s*\}\}", "token passed to artifact downloader"),
 )
-PRODUCTION = ("archive-market-daily.yml","djofin-public-news-collector.yml",
+WRITER_ALLOWLIST = ("djofin-public-news-collector.yml", "archive-market-daily.yml")\nPRODUCTION = ("archive-market-daily.yml","djofin-public-news-collector.yml",
               "gemini-free-trial.yml","gemini-list-models.yml","gemini-minimal-probe.yml",
               "restore-cw8-reference-once.yml")
 
@@ -28,7 +28,7 @@ def audit(directory):
         if not path.exists():
             problems[name]=["missing workflow"]
             continue
-        findings=inspect_workflow(path.read_text(encoding="utf-8"))
+        source=path.read_text(encoding="utf-8")\n        findings=inspect_workflow(source)\n        if name in WRITER_ALLOWLIST and "write token" in findings:\n            findings.remove("write token")\n            if "actions/checkout@" in source or "pip install" in source or "ref: simulation-p0" in source:\n                findings.append("privileged writer executes mutable or third-party code")\n            if "GH_TOKEN: ${{ github.token }}" not in source:\n                findings.append("writer token declaration missing")
         if findings:
             problems[name]=findings
     return problems
