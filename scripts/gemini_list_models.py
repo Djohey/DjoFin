@@ -22,6 +22,22 @@ def main():
         {"name": m.get("name"), "generateContent": "generateContent" in m.get("supportedGenerationMethods", [])}
         for m in data.get("models", []) if m.get("name", "").startswith("models/gemini-")
     ]
-    print(json.dumps({"model_count": len(models), "models": models}, ensure_ascii=False))
+    detail = {}
+    for model_name in ("gemini-2.5-flash", "gemini-2.5-flash-lite"):
+        url = "https://generativelanguage.googleapis.com/v1beta/models/" + model_name
+        request = urllib.request.Request(url, headers={"x-goog-api-key": key})
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                record = json.load(response)
+            detail[model_name] = {
+                "http": 200,
+                "name": record.get("name"),
+                "supported_methods": record.get("supportedGenerationMethods", []),
+                "input_token_limit": record.get("inputTokenLimit"),
+                "output_token_limit": record.get("outputTokenLimit"),
+            }
+        except urllib.error.HTTPError as exc:
+            detail[model_name] = {"http": exc.code}
+    print(json.dumps({"model_count": len(models), "model_details": detail}, ensure_ascii=False))
 if __name__ == "__main__":
     main()
