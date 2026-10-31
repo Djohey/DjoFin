@@ -46,8 +46,10 @@ jobs:
               request=urllib.request.Request(read_url,headers=headers)
               with urllib.request.urlopen(request,timeout=25) as response: obj=json.load(response)
               sha=obj["sha"]
-              raw=base64.b64decode(obj["content"])
-              assert len(raw)<4_000_000,"Historical news too large: rotate manually"
+              assert obj.get("encoding")=="base64" and isinstance(obj.get("content"),str), "GitHub omitted archive content: abort without writing"
+              assert isinstance(obj.get("size"),int) and obj["size"]<900_000, "Archive approaching GitHub Contents API limit: rotate before writing"
+              raw=base64.b64decode(obj["content"],validate=True)
+              assert len(raw)==obj["size"], "Truncated GitHub archive: abort without writing"
               for line in raw.splitlines():
                   if line.strip():
                       row=json.loads(line)
@@ -83,7 +85,7 @@ jobs:
                   added+=1
           if added:
               content="".join(json.dumps(row,ensure_ascii=False,sort_keys=True)+"\n" for row in previous.values())
-              assert len(content.encode())<4_000_000,"News archive limit reached"
+              assert len(content.encode())<900_000,"News archive nearing API limit: rotate before writing"
               payload={"message":"data: append verified-source RSS records (unverified claims)",
                        "content":base64.b64encode(content.encode()).decode(),"branch":"simulation-p0"}
               # A write token is needed ONLY for this fixed-path contents operation.
