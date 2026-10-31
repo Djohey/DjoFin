@@ -1,0 +1,196 @@
+{
+  "schema_version": "2.0",
+  "status": "EVALUATOR_ONLY_UNVERIFIED_CANDIDATES",
+  "audit_basis": "Claude report 2026-10-31; do not interpret as independently verified",
+  "events": [
+    {
+      "id": "azn_trial_pause_2020_09_08",
+      "date": "2020-09-08",
+      "tickers": [
+        "AZN"
+      ],
+      "type": "trial_pause",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "pfizer_interim_2020_11_09",
+      "date": "2020-11-09",
+      "tickers": [
+        "PFE",
+        "BNTX"
+      ],
+      "type": "interim_efficacy",
+      "session_note": "pre_us_open_exact_time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "moderna_interim_2020_11_16",
+      "date": "2020-11-16",
+      "tickers": [
+        "MRNA"
+      ],
+      "type": "interim_efficacy",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "azn_interim_2020_11_23",
+      "date": "2020-11-23",
+      "tickers": [
+        "AZN"
+      ],
+      "type": "interim_efficacy",
+      "session_note": "2020-11-23T07:00:00Z_claimed_verify",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "mhra_pfizer_2020_12_02",
+      "date": "2020-12-02",
+      "tickers": [
+        "PFE",
+        "BNTX"
+      ],
+      "type": "uk_authorization",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "sanofi_gsk_delay_2020_12_11",
+      "date": "2020-12-11",
+      "tickers": [
+        "SNY"
+      ],
+      "type": "development_delay",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "pfizer_fda_2020_12_11",
+      "date": "2020-12-11",
+      "tickers": [
+        "PFE",
+        "BNTX"
+      ],
+      "type": "us_authorization",
+      "session_note": "after_us_close_next_session_2020-12-14",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "moderna_fda_2020_12_18",
+      "date": "2020-12-18",
+      "tickers": [
+        "MRNA"
+      ],
+      "type": "us_authorization",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "merck_stop_2021_01_25",
+      "date": "2021-01-25",
+      "tickers": [
+        "MRK"
+      ],
+      "type": "program_discontinued",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "jnj_fda_2021_02_27",
+      "date": "2021-02-27",
+      "tickers": [
+        "JNJ"
+      ],
+      "type": "us_authorization",
+      "session_note": "weekend_next_session_2021-03-01",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "jnj_safety_2021_04_13",
+      "date": "2021-04-13",
+      "tickers": [
+        "JNJ"
+      ],
+      "type": "safety_signal_pause",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "curevac_interim_2021_06_16",
+      "date": "2021-06-16",
+      "tickers": [
+        "CVAC"
+      ],
+      "type": "trial_failure",
+      "session_note": "after_us_close_timezone_verify",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "pfizer_antiviral_2021_11_05",
+      "date": "2021-11-05",
+      "tickers": [
+        "PFE"
+      ],
+      "type": "antiviral_trial",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "omicron_who_2021_11_26",
+      "date": "2021-11-26",
+      "tickers": [],
+      "type": "variant_designation",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "novavax_fda_2022_07_13",
+      "date": "2022-07-13",
+      "tickers": [
+        "NVAX"
+      ],
+      "type": "us_authorization",
+      "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    }
+  ],
+  "guards": [
+    "Never send this file to blind analyst",
+    "Require primary archived release and verified publication timestamp",
+    "Require trading calendar per exchange and verified adjusted equity/benchmark prices",
+    "Treat safety signals as reports, not proven causality",
+    "Define equity universe before assessing winners and losers",
+    "Include delisted and unsuccessful candidates"
+  ]
+}
