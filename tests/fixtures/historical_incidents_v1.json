@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "method": "Historical incident cards; do not expose hindsight fields to the model. These are retrospective incident detection cases, not predictive point-in-time investment backtests.",
+  "cases": [
+    {
+      "id": "brka_2024_06_03",
+      "asset": "BRK.A",
+      "cutoff_utc": "2024-06-03T13:52:00Z",
+      "asof_observation": "BRK.A quote shows around USD 185 shortly after market open, versus prior close above USD 620000; extreme apparent decline, cause unverified at cutoff.",
+      "observation_status": "historical facts paraphrased, exact cutoff snapshot not archived; candidate only",
+      "hindsight": {
+        "outcome": "NYSE/CTA technical price-band issue; apparent collapse was not a fundamental valuation change.",
+        "source_urls": [
+          "https://www.nasdaq.com/press-release/interactive-brokers-trading-notice-2024-06-26",
+          "https://www.reuters.com/markets/us/nyse-equities-investigating-reported-technical-issue-2024-06-03/"
+        ]
+      },
+      "expected": {
+        "categories": [
+          "price_jump",
+          "invalid_data"
+        ],
+        "required_checks": [
+          "compare_second_source",
+          "inspect_raw_rows"
+        ],
+        "require_unknowns": true
+      },
+      "ready_for_point_in_time": false
+    },
+    {
+      "id": "nyse_2023_01_24",
+      "asset": "NYSE multiple listings",
+      "cutoff_utc": "2023-01-24T14:35:00Z",
+      "asof_observation": "Several NYSE listings display abrupt opening price dislocations; technical root cause not yet established.",
+      "observation_status": "reconstructed description, no time-stamped raw quote bundle",
+      "hindsight": {
+        "outcome": "Opening auction configuration error; NYSE later voided thousands of affected trades.",
+        "source_urls": [
+          "https://www.marketsmedia.com/nyse-opening-auctions-technical-issue-on-january-24-2023-resolution/",
+          "https://www.sec.gov/Archives/edgar/data/1571949/000095012323003061/450739ARS.pdf"
+        ]
+      },
+      "expected": {
+        "categories": [
+          "price_jump",
+          "invalid_data"
+        ],
+        "required_checks": [
+          "compare_second_source",
+          "inspect_raw_rows"
+        ],
+        "require_unknowns": true
+      },
+      "ready_for_point_in_time": false
+    }
+  ]
+}
