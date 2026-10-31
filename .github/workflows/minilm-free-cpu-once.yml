@@ -1,0 +1,40 @@
+name: MiniLM free CPU one-shot experiment
+on:
+  push:
+    branches: [simulation-p0]
+    paths:
+      - '.github/workflows/minilm-free-cpu-once.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  minilm_cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HUB_DISABLE_IMPLICIT_TOKEN: "1"
+      HF_HUB_OFFLINE: "0"
+      TRANSFORMERS_OFFLINE: "0"
+      TOKENIZERS_PARALLELISM: "false"
+      CUDA_VISIBLE_DEVICES: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify public repository and zero paid credentials
+        env:
+          REPO_PRIVATE: ${{ github.event.repository.private }}
+        run: |
+          test "$REPO_PRIVATE" = "false"
+          test -z "${OPENAI_API_KEY:-}"
+          test -z "${HF_TOKEN:-}"
+          test -z "${HUGGING_FACE_HUB_TOKEN:-}"
+      - name: Install CPU dependencies from public Python packages
+        run: |
+          python -m pip install --disable-pip-version-check 'sentence-transformers>=3.0,<4.0'
+      - name: Test public MiniLM on 40 collected titles, CPU only
+        run: python scripts/benchmark_minilm_free_cpu.py
