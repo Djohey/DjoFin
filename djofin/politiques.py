@@ -86,7 +86,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                     dernier = i
                     dernier_refus = None
                 elif brut > .01:
-                    if not r.adaptation_frais or dernier_refus != "achat":
+                    if not (r.adaptation_frais if r.dedoublonner_refus is None else r.dedoublonner_refus) or dernier_refus != "achat":
                         refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
                     dernier_refus = "achat"
             elif variation < -.01:
