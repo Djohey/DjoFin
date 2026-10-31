@@ -16,7 +16,7 @@ jobs:
       - name: Download archived reference using runner GitHub CLI (no checkout, no pip)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh run download 41193734641 -n DjoFin_Retests_Ablation_Python-3.11 -D restored
+        run: gh run download 41193734641 -R Djohey/DjoFin -n DjoFin_Retests_Ablation_Python-3.11 -D restored
       - name: Recover verified CSV and provenance from existing GitHub artifact
         env:
           GH_TOKEN: ${{ github.token }}
