@@ -21,13 +21,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Valider les tests
         run: python -m unittest discover -s tests -v
-      - name: Charger le jeu de donnees fige (audit de reference)
-        uses: actions/download-artifact@v4
-        with:
-          name: DjoFin_Retests_Ablation_Python-3.11
-          run-id: 41193734641
-          github-token: ${{ github.token }}
-          path: sortie/
+      - name: Charger la reference versionnee et figee sur main
+        run: |
+          mkdir -p sortie/donnees
+          BASE=https://raw.githubusercontent.com/Djohey/DjoFin/3a98d4af14204231afe637f1267040e6380ee8eb/data/reference
+          curl --fail --silent --show-error --location --retry 2 "$BASE/CW8_PA_2020-01-01_2025-01-01.csv" --output sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv
+          curl --fail --silent --show-error --location --retry 2 "$BASE/CW8_PA_2020-01-01_2025-01-01.json" --output sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json
       - name: Verifier empreinte independante du CSV
         run: |
           python -c "from pathlib import Path; import hashlib; p=Path('sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv'); actual=hashlib.sha256(p.read_bytes()).hexdigest(); expected='26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454'; print('SHA256:',actual); assert actual==expected, 'Donnees historiques modifiees'"
