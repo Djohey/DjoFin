@@ -33,7 +33,23 @@ def main():
         with urllib.request.urlopen(http_request, timeout=20) as response:
             envelope = json.load(response)
     except urllib.error.HTTPError as exc:
-        raise SystemExit(f'Gemini API HTTP {exc.code}; no retry. Check model and quota.') from None
+        # Parse only structured error classification. Never log the raw provider
+        # body, message, request, API key, project identifiers or headers.
+        category = "UNKNOWN"
+        allowed = {"NOT_FOUND", "INVALID_ARGUMENT", "PERMISSION_DENIED",
+                   "UNAUTHENTICATED", "RESOURCE_EXHAUSTED", "FAILED_PRECONDITION",
+                   "UNAVAILABLE", "INTERNAL"}
+        try:
+            body = json.loads(exc.read(8192))
+            code = body.get("error", {}).get("status", "")
+            if isinstance(code, str) and code in allowed:
+                category = code
+        except (ValueError, TypeError, AttributeError):
+            pass
+        print(json.dumps({"event": "gemini_api_error", "http_status": exc.code,
+                          "error_category": category, "model": prepared["model"],
+                          "retry": False, "usage_known": False}))
+        raise SystemExit(1) from None
     answer, tokens = extract_gemini_response(envelope)
     verdict = validate_response(request, answer)
     print(json.dumps({"test":"single public synthetic observation",
