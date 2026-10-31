@@ -1,0 +1,8 @@
+{
+  "ticker": "CW8.PA",
+  "captured_utc_date": "2026-10-31",
+  "csv_file": "CW8_PA_2026-10-10_2026-11-01.csv",
+  "csv_sha256": "c0cb5216d64007edff479c4d9afeff7d18f0ccccf478b2657b1f0e2cb800ccb5",
+  "retention": "immutable daily capture; no overwrite",
+  "warning": "Vendor reconstruction, not point-in-time corporate actions"
+}

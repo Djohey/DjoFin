@@ -1,0 +1,14 @@
+{
+  "ticker": "CW8.PA",
+  "currency": "EUR",
+  "source": "yfinance Yahoo Finance historical download; raw unadjusted OHLC",
+  "retrieved_at_utc": "2026-10-31T10:50:31.407120+00:00",
+  "csv_sha256": "c0cb5216d64007edff479c4d9afeff7d18f0ccccf478b2657b1f0e2cb800ccb5",
+  "observation_count": 15,
+  "limitations": [
+    "modern vendor history, not point-in-time revisions",
+    "currency and ETF identity must be manually verified",
+    "unadjusted prices omit cash distributions",
+    "not a broker execution price"
+  ]
+}
