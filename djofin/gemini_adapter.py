@@ -4,7 +4,7 @@ Offline preparation only. No HTTP calls, no credentials, no access to source cod
 or databases. Live integration requires separate explicit approval.
 """
 import json
-from djofin.ai_contract import serialize_request
+from djofin.ai_contract import serialize_request, canonical_json
 
 GEMINI_ROLE = (
     "You are a read-only analyst of PUBLIC market observations. "
@@ -31,7 +31,7 @@ def prepare_gemini_payload(request, *, model="gemini-3.5-flash-lite"):
     if not isinstance(request, dict) or not request.get("request_digest"):
         raise GeminiPreparationError("Validated request required")
     # Only the contracted, filtered observations; never attach repository files.
-    prompt = serialize_request(request)
+    # Preserve every audited field and digest, but omit JSON indentation.\n    # serialize_request verifies the digest before any payload is assembled.\n    serialize_request(request)\n    prompt = canonical_json(request)
     payload = {
         "systemInstruction": {"parts": [{"text": GEMINI_ROLE}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
