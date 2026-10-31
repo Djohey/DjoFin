@@ -1,0 +1,31 @@
+{
+  "total": 40,
+  "review": 2,
+  "routine": 6,
+  "explore": 32,
+  "unknown_rate": 0.8,
+  "source_breakdown": {
+    "ecb_press": {
+      "review": 2,
+      "routine": 5,
+      "explore": 8
+    },
+    "sec_press": {
+      "review": 0,
+      "routine": 1,
+      "explore": 24
+    }
+  },
+  "method": "Reproduction exacte des règles de djofin/research_priority.py sur les titres des 40 lignes data/news/news.jsonl. Ce n'est pas une exécution du programme Python dans GitHub Actions ni une mesure de pertinence validée.",
+  "known_failures": [
+    "bank lending survey: explore despite macroeconomic relevance",
+    "Access to Finance lending conditions tightened: explore",
+    "tokenisation financial infrastructure: explore"
+  ],
+  "next_tests": [
+    "Build human-annotated ground truth blind to model labels",
+    "Measure precision and recall on a frozen test set",
+    "Keep all explore cases and sample routine cases for false negatives",
+    "Check SEC terminology separately and add entity/event extraction before model claims"
+  ]
+}
