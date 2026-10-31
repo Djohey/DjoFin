@@ -23,6 +23,8 @@ def run_analysis(request, *, transport=None, log_path="sortie/ai_audit.jsonl"):
 
     Cost cap is an *estimate*, not a provider-enforced spending limit.
     """
+    if transport is None:
+        raise ConnectorError("Simulation-only mode: external AI network calls are blocked")
     if os.environ.get("DJOFIN_AI_ENABLED") != "1":
         raise ConnectorError("AI disabled: set DJOFIN_AI_ENABLED=1 explicitly")
     endpoint = os.environ.get("DJOFIN_AI_ENDPOINT", "")
