@@ -55,7 +55,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
             tarif = r.tarification or Tarification(pourcentage=r.frais)
             if variation > 0.01:
                 brut = montant_achat(min(variation, liquidites), tarif)
-                if (r.adaptation_frais and r.mode in ("progressif", "combine")
+                if ((r.adaptation_frais if r.adapter_achats is None else r.adapter_achats) and r.mode in ("progressif", "combine")
                         and brut > .01 and frais_ordre(brut, tarif) / brut > r.seuil_frais_relatifs):
                     exposition = parts*b.open/valeur
                     plafond = r.exposition_initiale_max if parts <= 1e-12 else min(1., exposition + .35)
