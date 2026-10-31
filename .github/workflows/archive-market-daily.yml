@@ -70,7 +70,7 @@ jobs:
                   raise RuntimeError("Existing snapshot: refusing overwrite")
           except urllib.error.HTTPError as e:
               if e.code!=404:raise
-          content=(json.dumps(archive,sort_keys=True)+"\\n").encode()
+          content=(json.dumps(archive,sort_keys=True)+"\n").encode()
           payload={"message":"data: immutable trusted CW8 daily OHLC archive",
                    "branch":"simulation-p0","content":base64.b64encode(content).decode()}
           req=urllib.request.Request(endpoint,headers=headers,data=json.dumps(payload).encode(),method="PUT")
