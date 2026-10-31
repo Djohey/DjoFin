@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 from djofin.ai_contract import serialize_request, validate_response, ContractError
 
-MAX_REQUEST_USD = 0.02
+MAX_REQUEST_USD = 0.0  # Phase simulation : aucun appel facturable autorise
 MAX_RESPONSE_BYTES = 100_000
 
 class ConnectorError(RuntimeError):
@@ -48,7 +48,7 @@ def run_analysis(request, *, transport=None, log_path="sortie/ai_audit.jsonl"):
     estimated_input_tokens = len(prompt.encode("utf-8")) + 1500
     ceiling = (estimated_input_tokens * input_price + max_output_tokens * output_price) / 1_000_000
     if ceiling > MAX_REQUEST_USD:
-        raise ConnectorError("Estimated request cost exceeds cap")
+        raise ConnectorError("Zero-dollar budget: paid AI requests forbidden")
     payload = json.dumps({
         "model": model,
         "temperature": 0,
