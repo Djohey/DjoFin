@@ -1,0 +1,37 @@
+name: Rapport de simulation historique DjoFin
+
+on:
+  push:
+    branches: [simulation-p0]
+    paths:
+      - '.github/workflows/rapport-simulation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Installer le téléchargement des cours
+        run: python -m pip install 'yfinance>=0.2.50,<2'
+      - name: Récupérer un historique figé de CW8
+        run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out sortie/donnees
+      - name: Calculer la comparaison et rédiger le rapport
+        run: |
+          python -m scripts.rapport_simulation \
+            --csv sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv \
+            --metadata sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json \
+            --sortie sortie/rapport_simulation_CW8_2020_2024.md
+      - name: Archiver le rapport et les données justificatives
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rapport_DjoFin_CW8_2020_2024
+          path: sortie/
+          if-no-files-found: error
+          retention-days: 90
