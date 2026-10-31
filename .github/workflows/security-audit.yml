@@ -1,21 +1,24 @@
-name: Audit production workflow security
+name: Audit all production workflows and actual collector code
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/**'
-      - 'scripts/audit_production_workflows.py'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     steps:
-      - name: Checkout current production workflows without stored token
-        uses: actions/checkout@v4
+      - name: Checkout without stored credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Audit permissions and mutable refs without pip
-        run: python3 scripts/audit_production_workflows.py
+      - name: Compile production writer and audit every workflow
+        run: |
+          python3 -m py_compile tools/djofin_trusted_writers.py scripts/audit_production_workflows.py
+          python3 scripts/audit_production_workflows.py
+          python3 -m unittest discover -s tests -v
