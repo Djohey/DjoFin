@@ -1,12 +1,77 @@
-name: Security hold - archive-market-daily
+name: DjoFin daily CW8 archive (trusted inline, no dependencies)
 on:
+  schedule:
+    - cron: "20 19 * * 1-5"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: djofin-market-archive-writer
+  cancel-in-progress: false
 jobs:
-  notice:
+  archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 1
+    timeout-minutes: 5
     steps:
-      - name: Report paused operation without credentials
-        run: echo "Security hold N1/N2 - workflow disabled until pinned code and dependency review"
+      - name: Fetch validated CW8 daily OHLC and store immutable snapshot (no checkout, no pip)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import base64,csv,hashlib,io,json,os,urllib.request,urllib.error
+          from datetime import datetime,timezone
+          repo=os.environ["GH_REPOSITORY"]
+          assert repo=="Djohey/DjoFin"
+          token=os.environ["GH_TOKEN"]
+          today=datetime.now(timezone.utc).date().isoformat()
+          root=f"data/market_archive/CW8_PA/{today}"
+          url="https://query1.finance.yahoo.com/v8/finance/chart/CW8.PA?range=1mo&interval=1d"
+          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 DjoFinHistoricalArchive/1"})
+          with urllib.request.urlopen(req,timeout=20) as response:
+              data=response.read(1_000_001)
+          assert len(data)<=1_000_000,"Market response too large"
+          result=json.loads(data)["chart"]["result"][0]
+          assert result["meta"]["symbol"]=="CW8.PA"
+          assert result["meta"]["currency"]=="EUR"
+          quote=result["indicators"]["quote"][0]
+          timestamps=result["timestamp"]
+          rows=[]
+          for ts,opening,closing in zip(timestamps,quote["open"],quote["close"]):
+              day=datetime.fromtimestamp(ts,timezone.utc).date().isoformat()
+              if opening is None or closing is None:continue
+              opening=float(opening);closing=float(closing)
+              if not (0<opening<100000 and 0<closing<100000):continue
+              rows.append((day,format(opening,".12g"),format(closing,".12g")))
+          assert 5<=len(rows)<=35,"Incomplete or unexpected price history"
+          assert rows==sorted(rows),"Unordered dates"
+          out=io.StringIO()
+          writer=csv.writer(out,lineterminator="\n")
+          writer.writerow(["Date","Open","Close"])
+          writer.writerows(rows)
+          csv_bytes=out.getvalue().encode()
+          digest=hashlib.sha256(csv_bytes).hexdigest()
+          meta={"ticker":"CW8.PA","currency":"EUR","source":"Yahoo Finance chart API, raw OHLC",
+                "captured_utc":datetime.now(timezone.utc).isoformat(),"csv_sha256":digest,
+                "observation_count":len(rows),"warning":"Modern vendor reconstruction, not point-in-time"}
+          headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json",
+                   "X-GitHub-Api-Version":"2022-11-28","User-Agent":"DjoFinTrustedMarket/1",
+                   "Content-Type":"application/json"}
+          for filename,content in (("prices.csv",csv_bytes),
+                                   ("integrity.json",(json.dumps(meta,indent=2)+"\n").encode())):
+              path=root+"/"+filename
+              endpoint=f"https://api.github.com/repos/{repo}/contents/{path}"
+              # Immutable: never overwrite an existing path. 422 means already archived.
+              try:
+                  check=urllib.request.Request(endpoint,headers=headers)
+                  with urllib.request.urlopen(check,timeout=20):
+                      raise RuntimeError("Existing snapshot: refusing overwrite")
+              except urllib.error.HTTPError as e:
+                  if e.code!=404:raise
+              payload={"message":"data: immutable CW8 daily OHLC archive",
+                       "branch":"simulation-p0","content":base64.b64encode(content).decode()}
+              req=urllib.request.Request(endpoint,headers=headers,data=json.dumps(payload).encode(),method="PUT")
+              with urllib.request.urlopen(req,timeout=25) as response:
+                  assert response.status==201
+          print(json.dumps({"captured":today,"rows":len(rows),"sha256":digest}))
+          PY
