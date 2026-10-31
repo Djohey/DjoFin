@@ -71,8 +71,8 @@ def main():
               "|---|---|---:|---:|---:|---:|---:|---:|"]
     for nom, modes in details.items():
         for mode, d in modes.items():
-            a, b = d["avant"], d["apres"]
-            lines.append(f"| {nom} | {mode} | {sum(x['frais'] for x in a['operations']):.2f} | "
+            resultat_avant, b = d["avant"], d["apres"]
+            lines.append(f"| {nom} | {mode} | {sum(x['frais'] for x in resultat_avant['operations']):.2f} | "
                          f"{sum(x['frais'] for x in b['operations']):.2f} | "
                          f"{len(b['operations'])} | {len(b['adaptations'])} | "
                          f"{len(b['ordres_refuses'])} | {repli_maximal(b['valeurs']):.2f} % |")
