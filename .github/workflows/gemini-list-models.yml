@@ -1,15 +1,12 @@
-# SECURITY HOLD 2026-10-31: N1/N2 external audit.
-# Prior implementation executed mutable simulation-p0 code with write token or Gemini secret.
-# This workflow intentionally has no runnable jobs. Re-enable only after pinned code,
-# least-privilege credentials, and dependency review.
-name: SECURITY HOLD - gemini-list-models.yml
+name: Security hold - gemini-list-models
 on:
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  security_hold:
-    if: ${{ false }}
+  notice:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     steps:
-      - run: echo "Security hold: no code executed, no credentials exposed"
+      - name: Report paused operation without credentials
+        run: echo "Security hold N1/N2 - workflow disabled until pinned code and dependency review"
