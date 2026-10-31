@@ -17,8 +17,13 @@ jobs:
           python-version: '3.11'
       - name: Vérifier les calculs
         run: python -m unittest discover -s tests -v
-      - name: Installer les données historiques
-        run: python -m pip install 'yfinance>=0.2.50,<2'
+      - name: Charger les prix historiques de reference, sans dependances externes
+        run: |
+          mkdir -p sortie/donnees
+          BASE=https://raw.githubusercontent.com/Djohey/DjoFin/3a98d4af14204231afe637f1267040e6380ee8eb/data/reference
+          curl --fail --silent --show-error --location "$BASE/CW8_PA_2020-01-01_2025-01-01.csv" --output sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv
+          curl --fail --silent --show-error --location "$BASE/CW8_PA_2020-01-01_2025-01-01.json" --output sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json
+          echo "26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454  sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv" | sha256sum -c -
       - name: Récupérer CW8
         run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out sortie/donnees
       - name: Exécuter seize simulations
