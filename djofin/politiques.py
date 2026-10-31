@@ -27,7 +27,9 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
         raise ValueError("Paramètres invalides")
     if r.confirmation < 1 or r.attente < 0 or r.objectif_vol <= 0:
         raise ValueError("Paramètres invalides")
-    if not 0 <= r.seuil_frais_relatifs <= 1:\n        raise ValueError("Seuil de frais invalide")\n    if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
+    if not 0 <= r.seuil_frais_relatifs <= 1:
+        raise ValueError("Seuil de frais invalide")
+    if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
         raise ValueError("Dates invalides")
     liquidites, parts = r.capital, 0.
     historique, operations, decisions, valeurs = [], [], [], []
