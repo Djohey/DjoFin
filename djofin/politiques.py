@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from .simulator import Bar
 import math
+from .tarification import Tarification, frais_ordre, montant_achat
 
 @dataclass(frozen=True)
 class Regles:
@@ -14,6 +15,8 @@ class Regles:
     confirmation: int = 3
     attente: int = 10
     objectif_vol: float = .15
+    tarification: Tarification | None = None
+    seuil_frais_relatifs: float = .02
 
 def comparer_regle(bars: list[Bar], r: Regles) -> dict:
     if r.mode not in ("initial", "progressif", "volatilite", "combine"):
@@ -24,36 +27,42 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
         raise ValueError("Paramètres invalides")
     if r.confirmation < 1 or r.attente < 0 or r.objectif_vol <= 0:
         raise ValueError("Paramètres invalides")
-    if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
+    if not 0 <= r.seuil_frais_relatifs <= 1:\n        raise ValueError("Seuil de frais invalide")\n    if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
         raise ValueError("Dates invalides")
     liquidites, parts = r.capital, 0.
     historique, operations, decisions, valeurs = [], [], [], []
     ordre = None
     suite = 0
     dernier = -100000
+    refuses = []
     for i, b in enumerate(bars):
         if ordre is not None and b.open is not None:
             cible, date_signal = ordre
             valeur = liquidites + parts * b.open
             variation = cible * valeur - parts * b.open
+            tarif = r.tarification or Tarification(pourcentage=r.frais)
             if variation > 0.01:
-                brut = min(variation / (1 + r.frais), liquidites / (1 + r.frais))
-                if brut > .01:
-                    cout = brut * r.frais
+                brut = montant_achat(min(variation, liquidites), tarif)
+                if brut > .01 and frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs:
+                    cout = frais_ordre(brut, tarif)
                     liquidites -= brut + cout
                     parts += brut / b.open
                     operations.append({"date": b.day, "signal": date_signal,
                                        "sens": "achat", "frais": cout})
                     dernier = i
+                elif brut > .01:
+                    refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
             elif variation < -.01:
                 brut = min(-variation, parts * b.open)
-                if brut > .01:
-                    cout = brut * r.frais
+                if brut > .01 and frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs:
+                    cout = frais_ordre(brut, tarif)
                     liquidites += brut - cout
                     parts -= brut / b.open
                     operations.append({"date": b.day, "signal": date_signal,
                                        "sens": "vente", "frais": cout})
                     dernier = i
+                elif brut > .01:
+                    refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
         ordre = None
         historique.append(b.close)
         decision, justification = "attente", "Historique insuffisant"
@@ -93,5 +102,5 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                           "information_disponible": b.day + " clôture"})
         valeurs.append({"date": b.day, "valeur": liquidites + parts*b.close
                         if b.close is not None else None})
-    return {"mode": r.mode, "operations": operations, "decisions": decisions,
+    return {"mode": r.mode, "operations": operations, "ordres_refuses": refuses, "decisions": decisions,
             "valeurs": valeurs, "capital_final": valeurs[-1]["valeur"]}
