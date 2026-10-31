@@ -102,15 +102,22 @@ def news():
     feeds={"ecb_press":"https://www.ecb.europa.eu/rss/press.html",
            "sec_press":"https://www.sec.gov/news/pressreleases.rss"}
     added=0
+    errors=[]
     for feed_id,feed_url in feeds.items():
         req=urllib.request.Request(feed_url,headers={"User-Agent":"DjoFinResearch/0.1 public RSS research",
                                                      "Accept":"application/rss+xml, application/xml, text/xml"})
-        with urllib.request.urlopen(req,timeout=15) as response:
-            data=response.read(2_000_001)
-        assert len(data)<=2_000_000,"Feed too large"
+        try:
+            with urllib.request.urlopen(req,timeout=15) as response:
+                data=response.read(2_000_001)
+            assert len(data)<=2_000_000,"Feed too large"
+        except (OSError,ValueError) as exc:
+            errors.append(feed_id+": "+type(exc).__name__)
+            continue
         root=ET.fromstring(data)
         entries=root.findall(".//item")
-        assert entries,"Missing RSS items: fail closed"
+        if not entries:
+            errors.append(feed_id+": empty feed")
+            continue
         for entry in entries:
             def field(name):
                 node=entry.find(name)
@@ -136,7 +143,8 @@ def news():
                                    data=json.dumps(payload).encode(),method="PUT")
         with urllib.request.urlopen(req,timeout=30) as response:
             assert response.status in (200,201)
-    print(json.dumps({"feeds":list(feeds),"new":added,"stored_total":len(previous)}))
+    print(json.dumps({"feeds":list(feeds),"new":added,"stored_total":len(previous),"errors":errors}))
+    if errors: raise SystemExit(1)
 
 if __name__=="__main__":
     import sys
