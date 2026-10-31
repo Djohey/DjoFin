@@ -19,6 +19,9 @@ class Regles:
     seuil_frais_relatifs: float = .02
     adaptation_frais: bool = False
     exposition_initiale_max: float = .35
+    adapter_achats: bool | None = None
+    adapter_ventes: bool | None = None
+    dedoublonner_refus: bool | None = None
 
 def comparer_regle(bars: list[Bar], r: Regles) -> dict:
     if r.mode not in ("initial", "progressif", "volatilite", "combine"):
