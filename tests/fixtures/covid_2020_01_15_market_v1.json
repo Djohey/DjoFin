@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "case_id": "respiratory_outbreak_2020",
+  "market_cutoff_utc": "2020-01-16T00:00:00Z",
+  "status": "historical_market_observations_verified_retrospectively_not_archived_point_in_time",
+  "analyst_market_data": [
+    {
+      "series": "SP500",
+      "date": "2020-01-13",
+      "value": 3288.13,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/SP500"
+    },
+    {
+      "series": "SP500",
+      "date": "2020-01-14",
+      "value": 3283.15,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/SP500"
+    },
+    {
+      "series": "SP500",
+      "date": "2020-01-15",
+      "value": 3289.29,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/SP500"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-13",
+      "value": 12.32,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/VIXCLS"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-14",
+      "value": 12.39,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/VIXCLS"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-15",
+      "value": 12.42,
+      "unit": "index",
+      "source_url": "https://fred.stlouisfed.org/data/VIXCLS"
+    }
+  ],
+  "safeguards": [
+    "Daily close observations only available after their session ends.",
+    "FRED current historical series are retrospective, not evidence of the exact real-time feed.",
+    "Do not supply any values after 2020-01-15.",
+    "Do not imply lack of volatility proves absence of risk.",
+    "Do not supply later COVID outcomes or previous replay feedback."
+  ],
+  "next_requirements": [
+    "Verify archived January 2020 publication snapshots for public health sources.",
+    "Add sector exposures and contemporaneous economic indicators only after date and source checks.",
+    "Keep evaluator outcome and future price paths separate."
+  ]
+}
