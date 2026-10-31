@@ -24,6 +24,7 @@ def main():
             result = json.load(response)
     except urllib.error.HTTPError as exc:
         category = "UNKNOWN"
+        reason = "UNCLASSIFIED"
         allowed = {"NOT_FOUND", "INVALID_ARGUMENT", "PERMISSION_DENIED",
                    "UNAUTHENTICATED", "RESOURCE_EXHAUSTED", "FAILED_PRECONDITION",
                    "UNAVAILABLE", "INTERNAL"}
@@ -32,10 +33,25 @@ def main():
             status = body.get("error", {}).get("status")
             if status in allowed:
                 category = status
+            message = str(body.get("error", {}).get("message", "")).lower()
+            if "not found for api version" in message:
+                reason = "MODEL_API_VERSION_MISMATCH"
+            elif "not supported for generatecontent" in message:
+                reason = "GENERATION_NOT_SUPPORTED"
+            elif "not found" in message and "model" in message:
+                reason = "MODEL_NOT_FOUND_FOR_GENERATION"
+            elif "api key" in message:
+                reason = "API_KEY_RESTRICTION"
+            elif "location" in message or "region" in message:
+                reason = "LOCATION_RESTRICTION"
+            elif "billing" in message:
+                reason = "BILLING_RESTRICTION"
+            elif "permission" in message or "access" in message:
+                reason = "ACCESS_RESTRICTION"
         except (ValueError, TypeError, AttributeError):
             pass
         print(json.dumps({"http": exc.code, "error_category": category,
-                          "model": model, "generation_succeeded": False,
+                          "model": model, "reason": reason, "generation_succeeded": False,
                           "usage_known": False, "retry": False}))
         raise SystemExit(1) from None
     usage = result.get("usageMetadata", {})
