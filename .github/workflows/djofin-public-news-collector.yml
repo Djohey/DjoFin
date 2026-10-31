@@ -42,7 +42,9 @@ jobs:
           previous={}
           sha=None
           try:
-              obj=api()
+              read_url=url+"?ref=simulation-p0"
+              request=urllib.request.Request(read_url,headers=headers)
+              with urllib.request.urlopen(request,timeout=25) as response: obj=json.load(response)
               sha=obj["sha"]
               raw=base64.b64decode(obj["content"])
               assert len(raw)<4_000_000,"Historical news too large: rotate manually"
