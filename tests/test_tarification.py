@@ -25,7 +25,7 @@ class TestsTarification(unittest.TestCase):
     def test_refus_petit_ordre(self):
         bars = [Bar(f"2020-01-{i+1:02d}", 100+i, 100+i) for i in range(20)]
         r = comparer_regle(bars, Regles(mode="progressif", rapide=2, lente=4,
-                          confirmation=1, capital=100, attente=0,
+                          confirmation=1, capital=100, attente=0, seuil=0,
                           tarification=Tarification(fixe=5, pourcentage=0)))
         self.assertTrue(r["ordres_refuses"])
         self.assertEqual(len(r["operations"]), 0)
