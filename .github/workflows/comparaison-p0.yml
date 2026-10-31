@@ -1,0 +1,10 @@
+name: Comparaison P0
+on:
+  push:
+    branches: [simulation-p0]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s tests -v
