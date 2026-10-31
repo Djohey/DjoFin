@@ -1,8 +1,5 @@
 name: DjoFin official RSS durable archive (shared tested stdlib)
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/djofin-public-news-collector.yml']
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
