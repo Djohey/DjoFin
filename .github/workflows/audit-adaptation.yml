@@ -40,6 +40,43 @@ jobs:
           path: sortie/
           if-no-files-found: error
 
+  comparer:
+    needs: audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer les deux rapports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: DjoFin_Retests_Ablation_Python-*
+          path: comparaisons/
+      - name: Comparer rapports et donnees detaillees
+        run: |
+          python - <<'PY'
+          import json
+          import math
+          from pathlib import Path
+          a = Path("comparaisons/DjoFin_Retests_Ablation_Python-3.11/audit_adaptation")
+          b = Path("comparaisons/DjoFin_Retests_Ablation_Python-3.13/audit_adaptation")
+          assert a.with_suffix(".md").read_bytes() == b.with_suffix(".md").read_bytes(), "Rapports divergents"
+          left = json.loads(a.with_suffix(".json").read_text())
+          right = json.loads(b.with_suffix(".json").read_text())
+          def comparer(x, y, chemin="racine"):
+              if isinstance(x, dict) and isinstance(y, dict):
+                  assert x.keys() == y.keys(), chemin
+                  for k in x:
+                      comparer(x[k], y[k], chemin + "." + k)
+              elif isinstance(x, list) and isinstance(y, list):
+                  assert len(x) == len(y), chemin
+                  for i, (v, w) in enumerate(zip(x, y)):
+                      comparer(v, w, chemin + "[" + str(i) + "]")
+              elif isinstance(x, (int, float)) and isinstance(y, (int, float)):
+                  assert math.isclose(x, y, rel_tol=1e-12, abs_tol=1e-9), chemin
+              else:
+                  assert x == y, chemin
+          comparer(left, right)
+          print("Rapports identiques et JSON concordants (tolérance 1e-9).")
+          PY
+
 # Relance après correction du rapport
 
 # Recalcul après corrections audit P0
