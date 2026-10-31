@@ -39,5 +39,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DjoFin-Archive-Status
-          path: sortie/archive_status.md
+          path: |
+            sortie/archive_status.md
+            sortie/archive_alerts.json
           if-no-files-found: warn
