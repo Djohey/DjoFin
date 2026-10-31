@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "case_family": "covid_2020_2022_equity_vaccine_event_study",
+  "status": "research_plan_no_historical_returns_verified",
+  "mission": "Evaluate point-in-time financial reasoning about pandemic winners/losers and vaccine development, regulatory milestones, setbacks and safety signals.",
+  "tracks": [
+    {
+      "id": "cross_sector",
+      "topics": [
+        "travel_and_airlines",
+        "hospitality",
+        "ecommerce",
+        "cloud_and_remote_work",
+        "diagnostics",
+        "pharma"
+      ],
+      "metrics": [
+        "adjusted_price_return",
+        "total_return_when_available",
+        "sector_benchmark_return",
+        "abnormal_return",
+        "volume"
+      ],
+      "notes": "Use contemporaneous universe to avoid survivorship bias."
+    },
+    {
+      "id": "vaccine_competition",
+      "companies": [
+        {
+          "name": "Pfizer",
+          "ticker": "PFE",
+          "role": "Comirnaty co-developer"
+        },
+        {
+          "name": "BioNTech",
+          "ticker": "BNTX",
+          "role": "Comirnaty co-developer"
+        },
+        {
+          "name": "Moderna",
+          "ticker": "MRNA",
+          "role": "mRNA vaccine developer"
+        },
+        {
+          "name": "AstraZeneca",
+          "ticker": "AZN",
+          "role": "viral-vector vaccine developer"
+        },
+        {
+          "name": "Johnson & Johnson",
+          "ticker": "JNJ",
+          "role": "Janssen vaccine developer"
+        },
+        {
+          "name": "Novavax",
+          "ticker": "NVAX",
+          "role": "protein-based vaccine developer"
+        },
+        {
+          "name": "Sanofi",
+          "ticker": "SNY",
+          "role": "vaccine development programs"
+        }
+      ],
+      "event_types": [
+        "trial_start",
+        "phase_1_2_result",
+        "phase_3_efficacy",
+        "trial_pause_or_failure",
+        "emergency_authorization",
+        "first_rollout",
+        "supply_agreement",
+        "safety_signal",
+        "regulatory_restriction",
+        "withdrawal_or_reformulation"
+      ],
+      "notes": "First globally authorized, first in jurisdiction, and first distributed must be recorded separately; corporate partnerships and revenues matter."
+    }
+  ],
+  "method": {
+    "replay_cutoffs": "Each event gets its own frozen UTC cutoff and published-before evidence only.",
+    "blind_analyst": "Receives only information available before cutoff; no later outcomes, no prior run feedback.",
+    "independent_evaluator": "Holds event outcome, ex-post returns, benchmark comparisons and analyst scores separately.",
+    "replay_protocol": "Same frozen input per attempt, new conversation, versioned analysis method, record contamination risk from pretrained model.",
+    "return_windows": [
+      "event_day",
+      "plus_1_session",
+      "plus_5_sessions",
+      "plus_20_sessions"
+    ],
+    "controls": [
+      "market_and_sector_adjustment",
+      "announcement_timing_vs_exchange_hours",
+      "dividends_splits_currency",
+      "confounding_news",
+      "peer_comparison",
+      "missing_or_unreliable_data"
+    ],
+    "anti_leakage": [
+      "No hindsight in analyst packet",
+      "Historical publication timestamps verified",
+      "Never claim pretrained model has forgotten history",
+      "Unseen cases held out for final evaluation"
+    ],
+    "interpretation": "Price moves do not establish event causality; study abnormal returns and confounders.",
+    "execution": "offline_research_only_no_orders_no_model_api_calls"
+  },
+  "next_steps": [
+    "Locate contemporaneous regulator and company releases with verifiable publication times",
+    "Collect reliable historical adjusted equity prices and benchmark series",
+    "Define event-specific cutoff, blind prompt and separate answer key",
+    "Run offline integrity checks before manually approved AI tests"
+  ]
+}
