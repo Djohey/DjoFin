@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "status": "EVALUATOR_ONLY_UNVERIFIED_CANDIDATES",
+  "status": "EVALUATOR_ONLY_UNVERIFIED_CANDIDATES_NOT_FOR_REPLAY",
   "audit_basis": "Claude report 2026-10-31; do not interpret as independently verified",
   "events": [
     {
@@ -59,8 +59,8 @@
         "PFE",
         "BNTX"
       ],
-      "type": "uk_authorization",
-      "session_note": "time_unverified",
+      "type": "uk_authorization_pfizer_biontech_not_first_global_vaccine",
+      "session_note": "not first worldwide vaccine authorization; Russia Sputnik V registration 2020-08-11 claimed in audit, independently verify",
       "source_verified_independently": false,
       "market_prices_verified": false,
       "analyst_packet_eligible": false
@@ -69,7 +69,8 @@
       "id": "sanofi_gsk_delay_2020_12_11",
       "date": "2020-12-11",
       "tickers": [
-        "SNY"
+        "SNY",
+        "GSK"
       ],
       "type": "development_delay",
       "session_note": "time_unverified",
@@ -85,7 +86,7 @@
         "BNTX"
       ],
       "type": "us_authorization",
-      "session_note": "after_us_close_next_session_2020-12-14",
+      "session_note": "after_us_close_next_session_2020-12-14; anticipated by public advisory committee vote; verify vote time and expectations",
       "source_verified_independently": false,
       "market_prices_verified": false,
       "analyst_packet_eligible": false
@@ -97,7 +98,7 @@
         "MRNA"
       ],
       "type": "us_authorization",
-      "session_note": "time_unverified",
+      "session_note": "time_unverified; anticipated by public advisory committee vote; verify vote time and expectations",
       "source_verified_independently": false,
       "market_prices_verified": false,
       "analyst_packet_eligible": false
@@ -154,7 +155,10 @@
       "id": "pfizer_antiviral_2021_11_05",
       "date": "2021-11-05",
       "tickers": [
-        "PFE"
+        "PFE",
+        "MRNA",
+        "BNTX",
+        "MRK"
       ],
       "type": "antiviral_trial",
       "session_note": "time_unverified",
@@ -166,8 +170,8 @@
       "id": "omicron_who_2021_11_26",
       "date": "2021-11-26",
       "tickers": [],
-      "type": "variant_designation",
-      "session_note": "time_unverified",
+      "type": "who_variant_classification_followup",
+      "session_note": "Public announcement 2021-11-25 is earlier potential market signal; verify timestamp and US Thanksgiving trading calendar",
       "source_verified_independently": false,
       "market_prices_verified": false,
       "analyst_packet_eligible": false
@@ -180,6 +184,53 @@
       ],
       "type": "us_authorization",
       "session_note": "time_unverified",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "omicron_public_2021_11_25",
+      "date": "2021-11-25",
+      "tickers": [],
+      "type": "variant_public_announcement",
+      "session_note": "First public signal candidate, Thanksgiving US market closed; verify publication UTC",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "fda_vrbpac_pfizer_2020_12_10",
+      "date": "2020-12-10",
+      "tickers": [
+        "PFE",
+        "BNTX"
+      ],
+      "type": "advisory_committee_vote",
+      "session_note": "Public 17-4 vote reported by Claude; verify primary source and exact timestamp",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "fda_vrbpac_moderna_2020_12_17",
+      "date": "2020-12-17",
+      "tickers": [
+        "MRNA"
+      ],
+      "type": "advisory_committee_vote",
+      "session_note": "Vote details and timestamp require primary verification",
+      "source_verified_independently": false,
+      "market_prices_verified": false,
+      "analyst_packet_eligible": false
+    },
+    {
+      "id": "merck_antiviral_2021_10_01",
+      "date": "2021-10-01",
+      "tickers": [
+        "MRK"
+      ],
+      "type": "antiviral_trial",
+      "session_note": "Primary source and publication time not yet verified",
       "source_verified_independently": false,
       "market_prices_verified": false,
       "analyst_packet_eligible": false
