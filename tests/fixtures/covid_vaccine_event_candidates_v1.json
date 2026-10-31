@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "case_family": "covid_2020_2022_equity_vaccine_event_study",
+  "status": "candidate_events_require_primary_source_and_timestamp_verification_before_blind_replay",
+  "events": [
+    {
+      "id": "pfizer_biontech_2020_11_09",
+      "event_date": "2020-11-09",
+      "companies": [
+        "PFE",
+        "BNTX"
+      ],
+      "kind": "phase_3_interim_efficacy",
+      "summary": "Pfizer and BioNTech announced interim Phase 3 efficacy above 90%.",
+      "primary_source_candidate": "https://www.pfizer.com/news/press-release/press-release-detail/pfizer-and-biontech-announce-vaccine-candidate-against",
+      "cutoff_rule": "Before exact press release publication time; if timestamp unavailable, use prior trading session close."
+    },
+    {
+      "id": "moderna_2020_11_16",
+      "event_date": "2020-11-16",
+      "companies": [
+        "MRNA"
+      ],
+      "kind": "phase_3_interim_efficacy",
+      "summary": "Moderna announced interim Phase 3 efficacy of 94.5%.",
+      "primary_source_candidate": "https://investors.modernatx.com/news/news-details/2020/Modernas-COVID-19-Vaccine-Candidate-Meets-its-Primary-Efficacy-Endpoint-in-the-First-Interim-Analysis-of-the-Phase-3-COVE-Study/default.aspx",
+      "cutoff_rule": "Prior trading session close unless exact publication timestamp verified."
+    },
+    {
+      "id": "astrazeneca_2020_11_23",
+      "event_date": "2020-11-23",
+      "companies": [
+        "AZN"
+      ],
+      "kind": "phase_3_interim_efficacy",
+      "summary": "AstraZeneca and Oxford announced interim efficacy results with differing dosing regimens.",
+      "primary_source_candidate": "https://www.astrazeneca.com/media-centre/press-releases/2020/azd1222hlr.html",
+      "cutoff_rule": "Prior trading session close unless exact publication timestamp verified."
+    },
+    {
+      "id": "pfizer_fda_eua_2020_12_11",
+      "event_date": "2020-12-11",
+      "companies": [
+        "PFE",
+        "BNTX"
+      ],
+      "kind": "us_emergency_authorization",
+      "summary": "US FDA issued first US EUA for Pfizer-BioNTech COVID-19 vaccine.",
+      "primary_source_candidate": "https://www.fda.gov/news-events/press-announcements/fda-takes-key-action-fight-against-covid-19-issuing-emergency-use-authorization-first-covid-19",
+      "cutoff_rule": "Before exact FDA authorization publication time."
+    },
+    {
+      "id": "moderna_fda_eua_2020_12_18",
+      "event_date": "2020-12-18",
+      "companies": [
+        "MRNA"
+      ],
+      "kind": "us_emergency_authorization",
+      "summary": "US FDA issued EUA for Moderna COVID-19 vaccine.",
+      "primary_source_candidate": "https://www.fda.gov/news-events/press-announcements/fda-takes-additional-action-fight-against-covid-19-issuing-emergency-use-authorization-second",
+      "cutoff_rule": "Before exact FDA authorization publication time."
+    },
+    {
+      "id": "jnj_fda_eua_2021_02_27",
+      "event_date": "2021-02-27",
+      "companies": [
+        "JNJ"
+      ],
+      "kind": "us_emergency_authorization",
+      "summary": "US FDA issued EUA for Janssen single-dose vaccine.",
+      "primary_source_candidate": "https://www.fda.gov/news-events/press-announcements/fda-issues-emergency-use-authorization-third-covid-19-vaccine",
+      "cutoff_rule": "Before exact FDA authorization publication time."
+    },
+    {
+      "id": "jnj_pause_2021_04_13",
+      "event_date": "2021-04-13",
+      "companies": [
+        "JNJ"
+      ],
+      "kind": "safety_signal_regulatory_pause",
+      "summary": "US FDA and CDC recommended a pause in use of Janssen vaccine after reports of rare severe clotting events.",
+      "primary_source_candidate": "https://www.fda.gov/news-events/press-announcements/joint-cdc-and-fda-statement-johnson-johnson-covid-19-vaccine",
+      "cutoff_rule": "Prior trading session close unless exact announcement time verified."
+    },
+    {
+      "id": "novavax_2022_07_13",
+      "event_date": "2022-07-13",
+      "companies": [
+        "NVAX"
+      ],
+      "kind": "us_emergency_authorization",
+      "summary": "US FDA authorized Novavax COVID-19 vaccine for adults.",
+      "primary_source_candidate": "https://www.fda.gov/news-events/press-announcements/coronavirus-covid-19-update-fda-authorizes-emergency-use-novavax-covid-19-vaccine-adjuvanted",
+      "cutoff_rule": "Before exact authorization publication time."
+    }
+  ],
+  "critical_notes": [
+    "Not a verified event dataset: candidate URLs, timestamps and price series require independent checking.",
+    "Do not confuse first worldwide authorization with first FDA authorization.",
+    "Efficacy percentages are announcement claims and must be interpreted in their study context.",
+    "Safety reports and causality determinations must be distinguished.",
+    "Never transmit event summary, event label or hindsight to the blind analyst before cutoff.",
+    "Use adjusted prices and contemporaneous benchmark, calculate market/sector-adjusted returns; control for other announcements."
+  ]
+}
