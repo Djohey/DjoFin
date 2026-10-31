@@ -53,6 +53,8 @@ def main():
             precedent = (day, cloture)
         lines.append(f"- {manifest.parent}: {len(rows)-1} observations, SHA256 {digest[:12]}… OK")
     lines.extend(["", "## Alertes de qualite", *(("- " + a) for a in alertes)] if alertes else ["", "## Alertes de qualite", "- Aucune alerte detectee."])
+    Path("sortie").mkdir(exist_ok=True)
+    Path("sortie/archive_alerts.json").write_text(json.dumps({"alert_count":len(alertes),"alerts":alertes},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print("\n".join(lines))
     Path("sortie").mkdir(exist_ok=True)
     Path("sortie/archive_status.md").write_text("\n".join(lines)+"\n",encoding="utf-8")
