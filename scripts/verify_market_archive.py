@@ -29,7 +29,7 @@ def main():
         rows = csv_file.read_text(encoding="utf-8").splitlines()
         if len(rows) < 2 or rows[0] != "Date,Open,Close":
             raise RuntimeError(f"Invalid CSV format: {csv_file}")
-        observations = list(csv.DictReader(io.StringIO("\\n".join(rows))))
+        observations = list(csv.DictReader(io.StringIO("\n".join(rows))))
         precedent = None
         for row in observations:
             day = date.fromisoformat(row["Date"])
