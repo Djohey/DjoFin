@@ -18,7 +18,18 @@ def main():
     today = datetime.now(timezone.utc).date()
     root = Path(args.root) / args.ticker.replace(".", "_") / today.isoformat()
     if root.exists():
-        raise FileExistsError("Capture already exists for today; immutable archive")
+        manifest = root / "integrity.json"
+        if not manifest.exists():
+            raise RuntimeError("Existing archive is incomplete; manual review required")
+        previous = json.loads(manifest.read_text(encoding="utf-8"))
+        csv_path = root / previous["csv_file"]
+        if not csv_path.is_file():
+            raise RuntimeError("Archived CSV is missing")
+        digest = hashlib.sha256(csv_path.read_bytes()).hexdigest()
+        if digest != previous["csv_sha256"]:
+            raise RuntimeError("Archived CSV checksum mismatch")
+        print("Existing dated archive verified; nothing to overwrite")
+        return
     start = (today - timedelta(days=args.lookback_days)).isoformat()
     end = (today + timedelta(days=1)).isoformat()
     sys.argv = ["freeze_etf", "--ticker", args.ticker, "--start", start,
