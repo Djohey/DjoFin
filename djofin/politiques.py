@@ -92,7 +92,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
             elif variation < -.01:
                 brut = min(-variation, parts * b.open)
                 if brut > .01 and (frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs
-                                   or (r.adaptation_frais and brut > frais_ordre(brut, tarif))):
+                                   or ((r.adaptation_frais if r.adapter_ventes is None else r.adapter_ventes) and brut > frais_ordre(brut, tarif))):
                     cout = frais_ordre(brut, tarif)
                     liquidites += brut - cout
                     parts = 0.0 if cible == 0 else parts - brut / b.open
