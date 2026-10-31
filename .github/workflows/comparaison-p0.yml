@@ -1,10 +1,31 @@
-name: Comparaison P0
+name: Comparaison historique DjoFin
 on:
   push:
     branches: [simulation-p0]
+    paths:
+      - '.github/workflows/comparaison-p0.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  test:
+  comparaison:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python -m unittest discover -s tests -v
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Tests de non-regression
+        run: python -m unittest discover -s tests -v
+      - name: Installer le fournisseur
+        run: python -m pip install 'yfinance>=0.2.50,<2'
+      - name: Archiver CW8
+        run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out sortie/donnees
+      - name: Comparer les quatre politiques
+        run: |
+          python -m scripts.comparer_politiques --csv sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv --metadata sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json --sortie sortie/comparaison.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Comparaison_DjoFin_quatre_politiques
+          path: sortie/
+          if-no-files-found: error
