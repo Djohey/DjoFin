@@ -44,8 +44,14 @@ def market():
     endpoint=f"https://api.github.com/repos/{repo}/contents/{path}"
     try:
         check=urllib.request.Request(endpoint+"?ref=simulation-p0",headers=headers)
-        with urllib.request.urlopen(check,timeout=20):
-            raise RuntimeError("Existing snapshot: refusing overwrite")
+        with urllib.request.urlopen(check,timeout=20) as response:
+            existing=json.load(response)
+        if existing.get("encoding")!="base64": raise ValueError("Existing snapshot not readable")
+        stored=json.loads(base64.b64decode(existing["content"]).decode().removesuffix("\\n"))
+        saved=base64.b64decode(stored["csv_base64"])
+        if hashlib.sha256(saved).hexdigest()!=stored["metadata"]["csv_sha256"]: raise ValueError("Stored snapshot hash mismatch")
+        print(json.dumps({"status":"already_archived","date":today}))
+        return
     except urllib.error.HTTPError as e:
         if e.code!=404:raise
     content=(json.dumps(archive,sort_keys=True)+"\n").encode()
