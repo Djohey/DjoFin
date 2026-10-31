@@ -25,7 +25,7 @@ def prepare_gemini_payload(request, *, model="gemini-2.5-flash-lite"):
     # Only the contracted, filtered observations; never attach repository files.
     prompt = serialize_request(request)
     payload = {
-        "system_instruction": {"parts": [{"text": GEMINI_ROLE}]},
+        "systemInstruction": {"parts": [{"text": GEMINI_ROLE}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "responseMimeType": "application/json",
