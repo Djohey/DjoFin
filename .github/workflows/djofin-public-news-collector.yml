@@ -1,15 +1,37 @@
-# SECURITY HOLD 2026-10-31: N1/N2 external audit.
-# Prior implementation executed mutable simulation-p0 code with write token or Gemini secret.
-# This workflow intentionally has no runnable jobs. Re-enable only after pinned code,
-# least-privilege credentials, and dependency review.
-name: SECURITY HOLD - djofin-public-news-collector.yml
+name: DjoFin public news collector (read-only, pinned)
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
 permissions:
   contents: read
+
+concurrency:
+  group: djofin-public-news-collector-readonly
+  cancel-in-progress: false
+
 jobs:
-  security_hold:
-    if: ${{ false }}
+  collect:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - run: echo "Security hold: no code executed, no credentials exposed"
+      - name: Checkout reviewed immutable source
+        uses: actions/checkout@v4
+        with:
+          ref: c7dd82e026d48ccc472973999f15ef0a5d2ed7f8
+          persist-credentials: false
+      - name: Setup Python (no pip dependencies)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Collect official public RSS without secrets or repository write
+        run: python scripts/collect_public_feeds.py --output data/news/news.jsonl
+      - name: Archive run output as immutable workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: djofin-public-news-${{ github.run_id }}
+          path: data/news/news.jsonl
+          if-no-files-found: error
+          retention-days: 30
