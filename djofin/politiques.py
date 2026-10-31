@@ -141,5 +141,9 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                           "information_disponible": b.day + " clôture"})
         valeurs.append({"date": b.day, "valeur": liquidites + parts*b.close
                         if b.close is not None else None})
+    for op in operations:
+        attendu = op["cash_avant"] + (op["brut"] if op["sens"] == "vente" else -op["brut"]) - op["frais"]
+        if abs(op["cash_apres"] - attendu) > 1e-8 or op["parts_apres"] < -1e-9:
+            raise AssertionError("Transaction non reconciliable")
     return {"mode": r.mode, "operations": operations, "ordres_refuses": refuses, "adaptations": adaptations, "decisions": decisions,
             "valeurs": valeurs, "capital_final": valeurs[-1]["valeur"]}
