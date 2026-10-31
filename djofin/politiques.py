@@ -88,7 +88,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                                    or (r.adaptation_frais and brut > frais_ordre(brut, tarif))):
                     cout = frais_ordre(brut, tarif)
                     liquidites += brut - cout
-                    parts -= brut / b.open
+                    parts = 0.0 if cible == 0 else parts - brut / b.open
                     operations.append({"date": b.day, "signal": date_signal,
                                        "sens": "vente", "frais": cout})
                     dernier = i
