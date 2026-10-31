@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "audit_status": "RESEARCH_VERIFIED_CURRENT_PRIMARY_PAGES_ONLY_NO_POINT_IN_TIME_ARCHIVES",
+  "cutoff_utc": "2020-01-15T21:00:00Z",
+  "findings": [
+    {
+      "id": "WHO_2020_01_05",
+      "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229",
+      "publication_date": "2020-01-05",
+      "confirmed": "44 pneumonia cases as of Jan 3; 11 severe; no evidence of significant human-to-human transmission in preliminary reports",
+      "archived_before_cutoff": false
+    },
+    {
+      "id": "ECDC_2020_01_09",
+      "url": "https://www.ecdc.europa.eu/sites/default/files/documents/Threat-assessment-Pneumonia-cases-possibly-associated-to-a-novel-coronavirus-in-Wuhan-China.pdf",
+      "publication_date": "2020-01-09",
+      "confirmed": "59 possible cases; direct Wuhan flights to Paris 6 weekly, London 3, Rome 5; EU importation risk low but not excluded",
+      "archived_before_cutoff": false
+    },
+    {
+      "id": "WHO_2020_01_12",
+      "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON233",
+      "publication_date": "2020-01-12",
+      "confirmed": "41 preliminarily diagnosed cases, one death, genetic sequence shared Jan 12; current webpage title contains retrospective COVID-19",
+      "archived_before_cutoff": false
+    },
+    {
+      "id": "WHO_2020_01_13",
+      "url": "https://www.who.int/news-room/detail/13-01-2020-who-statement-on-novel-coronavirus-in-thailand",
+      "publication_date": "2020-01-13",
+      "confirmed": "WHO publicly discussed imported case in Thailand on Jan 13; this precedes DON234 Jan 14",
+      "archived_before_cutoff": false
+    },
+    {
+      "id": "WHO_2020_01_14",
+      "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON234",
+      "publication_date": "2020-01-14",
+      "confirmed": "Thailand imported confirmed case reported Jan 13",
+      "archived_before_cutoff": false
+    }
+  ],
+  "open_issues": [
+    "Find independently dated historical snapshots published or captured by cutoff for every analyst observation",
+    "Check Jan 15 contemporaneous public reports and Japan boundary timestamp",
+    "No stock-market close assumed published by a specific provider immediately after session",
+    "Do not feed current HTML titles or retrospective notes into blind model",
+    "No historical replay allowed until archive proof and licensing reviewed"
+  ],
+  "note": "Current official pages and original-dated PDF support historical facts, but do not prove exact content accessible at 2020-01-15 cutoff. Do not synthesize fake archive timestamps or digests."
+}
