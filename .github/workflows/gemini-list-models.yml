@@ -1,0 +1,24 @@
+name: DjoFin - Gemini models (manual read-only)
+on:
+  workflow_dispatch:
+jobs:
+  list_models:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout isolated simulation branch
+        uses: actions/checkout@v4
+        with:
+          ref: simulation-p0
+          persist-credentials: false
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: List available models (no generation)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DJOFIN_FREE_TEST_APPROVED: 'YES'
+        run: python -m scripts.gemini_list_models
