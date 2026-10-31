@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Recover verified CSV and provenance from existing GitHub artifact
+      - name: Download archived reference using runner GitHub CLI (no checkout, no pip)\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: gh run download 41193734641 -n DjoFin_Retests_Ablation_Python-3.11 -D restored\n      - name: Recover verified CSV and provenance from existing GitHub artifact
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
