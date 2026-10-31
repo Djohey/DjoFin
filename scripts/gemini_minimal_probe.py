@@ -12,7 +12,7 @@ def main():
     if os.getenv("DJOFIN_FREE_TEST_APPROVED") != "YES" or os.getenv("DJOFIN_FREE_TIER_CONFIRMED") != "YES":
         raise SystemExit("Explicit free-tier approval required")
     key = os.environ["GEMINI_API_KEY"]
-    model = "gemini-2.5-flash"
+    model = "gemini-3.5-flash-lite"
     endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     payload = {"contents": [{"parts": [{"text": "Return exactly one word: OK"}]}],
                "generationConfig": {"maxOutputTokens": 16, "temperature": 0}}
