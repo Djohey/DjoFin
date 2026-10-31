@@ -1,31 +1,15 @@
-name: DjoFin - Gemini free trial (manual only)
+# SECURITY HOLD 2026-10-31: N1/N2 external audit.
+# Prior implementation executed mutable simulation-p0 code with write token or Gemini secret.
+# This workflow intentionally has no runnable jobs. Re-enable only after pinned code,
+# least-privilege credentials, and dependency review.
+name: SECURITY HOLD - gemini-free-trial.yml
 on:
   workflow_dispatch:
-    inputs:
-      confirm_free_tier:
-        description: "Type FREE_ONLY after verifying AI Studio shows Niveau sans frais and no billing"
-        required: true
-        type: string
+permissions:
+  contents: read
 jobs:
-  free_trial:
-    if: ${{ inputs.confirm_free_tier == 'FREE_ONLY' }}
+  security_hold:
+    if: ${{ false }}
     runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions:
-      contents: read
     steps:
-      - name: Checkout isolated simulation branch
-        uses: actions/checkout@v4
-        with:
-          ref: simulation-p0
-          persist-credentials: false
-      - name: Configure Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Execute one Gemini call (no retry)
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          DJOFIN_FREE_TEST_APPROVED: 'YES'
-          DJOFIN_FREE_TIER_CONFIRMED: 'YES'
-        run: python -m scripts.gemini_free_trial
+      - run: echo "Security hold: no code executed, no credentials exposed"
