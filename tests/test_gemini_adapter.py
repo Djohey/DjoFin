@@ -12,6 +12,10 @@ class GeminiAdapterTests(unittest.TestCase):
             snapshot_dates=["2026-10-30"])
         result = prepare_gemini_payload(request)
         self.assertFalse(result["network_enabled"])
+        self.assertIn("systemInstruction", result["payload"])
+        self.assertNotIn("system_instruction", result["payload"])
+        self.assertEqual(result["payload"]["contents"][0]["role"], "user")
+        self.assertEqual(result["payload"]["generationConfig"]["responseMimeType"], "application/json")
         self.assertEqual(result["payload"]["generationConfig"]["maxOutputTokens"], 600)
         self.assertIn(request["request_digest"], result["payload"]["contents"][0]["parts"][0]["text"])
     def test_extract_usage(self):
