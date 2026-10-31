@@ -1,4 +1,4 @@
-name: DjoFin official RSS durable archive (trusted inline, stdlib)
+name: DjoFin official RSS durable archive (shared tested stdlib)
 on:
   push:
     branches: [main]
