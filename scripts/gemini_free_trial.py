@@ -1,12 +1,11 @@
 """Single-shot Gemini free-tier experiment; never runs automatically.
 
-Requires explicit workflow dispatch and secret. Rejects paid-tier projects by
-checking Google's project billing status before sending market observations.
-This check is advisory: API key tier and billing state can change.
+Requires explicit workflow dispatch and secret. Billing status is not API-verified; owner confirms free tier before dispatch.
 """
 import json
 import os
 import urllib.request
+import urllib.error
 from djofin.ai_contract import prepare_request, validate_response
 from djofin.gemini_adapter import prepare_gemini_payload, extract_gemini_response
 
@@ -30,8 +29,11 @@ def main():
     payload = json.dumps(prepared["payload"]).encode()
     http_request = urllib.request.Request(endpoint, data=payload, headers={
         "x-goog-api-key": key, "Content-Type": "application/json"}, method="POST")
-    with urllib.request.urlopen(http_request, timeout=20) as response:
-        envelope = json.load(response)
+    try:
+        with urllib.request.urlopen(http_request, timeout=20) as response:
+            envelope = json.load(response)
+    except urllib.error.HTTPError as exc:
+        raise SystemExit(f'Gemini API HTTP {exc.code}; no retry. Check model and quota.') from None
     answer, tokens = extract_gemini_response(envelope)
     verdict = validate_response(request, answer)
     print(json.dumps({"test":"single public synthetic observation",
