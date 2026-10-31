@@ -17,6 +17,8 @@ class Regles:
     objectif_vol: float = .15
     tarification: Tarification | None = None
     seuil_frais_relatifs: float = .02
+    adaptation_frais: bool = False
+    exposition_initiale_max: float = .35
 
 def comparer_regle(bars: list[Bar], r: Regles) -> dict:
     if r.mode not in ("initial", "progressif", "volatilite", "combine"):
@@ -29,6 +31,8 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
         raise ValueError("Paramètres invalides")
     if not 0 <= r.seuil_frais_relatifs <= 1:
         raise ValueError("Seuil de frais invalide")
+    if not 0 < r.exposition_initiale_max <= 1:
+        raise ValueError("Plafond d exposition invalide")
     if not bars or [b.day for b in bars] != sorted(set(b.day for b in bars)):
         raise ValueError("Dates invalides")
     liquidites, parts = r.capital, 0.
@@ -37,6 +41,8 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
     suite = 0
     dernier = -100000
     refuses = []
+    adaptations = []
+    dernier_refus = None
     for i, b in enumerate(bars):
         if ordre is not None and b.open is not None:
             cible, date_signal = ordre
@@ -45,6 +51,25 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
             tarif = r.tarification or Tarification(pourcentage=r.frais)
             if variation > 0.01:
                 brut = montant_achat(min(variation, liquidites), tarif)
+                if (r.adaptation_frais and r.mode in ("progressif", "combine")
+                        and brut > .01 and frais_ordre(brut, tarif) / brut > r.seuil_frais_relatifs):
+                    exposition = parts*b.open/valeur
+                    plafond = r.exposition_initiale_max if parts == 0 else min(1., exposition + .35)
+                    budget_max = min(liquidites, max(0., plafond*valeur-parts*b.open))
+                    maximum = montant_achat(budget_max, tarif)
+                    if maximum > brut and frais_ordre(maximum, tarif)/maximum <= r.seuil_frais_relatifs:
+                        bas, haut = brut, maximum
+                        for _ in range(40):
+                            milieu = (bas+haut)/2
+                            if frais_ordre(milieu, tarif)/milieu <= r.seuil_frais_relatifs:
+                                haut = milieu
+                            else:
+                                bas = milieu
+                        adaptations.append({"date": b.day, "signal": date_signal,
+                                            "montant_initial": brut,
+                                            "montant_adapte": haut,
+                                            "motif": "Commission trop elevee pour ordre initial"})
+                        brut = haut
                 if brut > .01 and frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs:
                     cout = frais_ordre(brut, tarif)
                     liquidites -= brut + cout
@@ -52,11 +77,15 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                     operations.append({"date": b.day, "signal": date_signal,
                                        "sens": "achat", "frais": cout})
                     dernier = i
+                    dernier_refus = None
                 elif brut > .01:
-                    refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
+                    if not r.adaptation_frais or dernier_refus != "achat":
+                        refuses.append({"date": b.day, "motif": "frais disproportionnes", "montant": brut})
+                    dernier_refus = "achat"
             elif variation < -.01:
                 brut = min(-variation, parts * b.open)
-                if brut > .01 and frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs:
+                if brut > .01 and (frais_ordre(brut, tarif) / brut <= r.seuil_frais_relatifs
+                                   or (r.adaptation_frais and brut > frais_ordre(brut, tarif))):
                     cout = frais_ordre(brut, tarif)
                     liquidites += brut - cout
                     parts -= brut / b.open
@@ -84,6 +113,7 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                     1., .10 if parts == 0 else exposition + .20)
             elif suite <= -requis:
                 cible = 0.
+                dernier_refus = None
             if cible is not None and r.mode in ("volatilite", "combine"):
                 fenetre = historique[-21:]
                 ret = [math.log(fenetre[j] / fenetre[j-1]) for j in range(1,len(fenetre))]
@@ -104,5 +134,5 @@ def comparer_regle(bars: list[Bar], r: Regles) -> dict:
                           "information_disponible": b.day + " clôture"})
         valeurs.append({"date": b.day, "valeur": liquidites + parts*b.close
                         if b.close is not None else None})
-    return {"mode": r.mode, "operations": operations, "ordres_refuses": refuses, "decisions": decisions,
+    return {"mode": r.mode, "operations": operations, "ordres_refuses": refuses, "adaptations": adaptations, "decisions": decisions,
             "valeurs": valeurs, "capital_final": valeurs[-1]["valeur"]}
