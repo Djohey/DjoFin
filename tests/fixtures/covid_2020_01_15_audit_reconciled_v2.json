@@ -1,0 +1,84 @@
+{
+  "schema_version": "2.0",
+  "audit": "Claude 2026-10-31 CORRIGER; source assertions not independently reverified in this commit",
+  "status": "QUARANTINED_NOT_REPLAY_READY",
+  "cutoff_utc": "2020-01-15T00:00:00Z",
+  "analyst_observations": [
+    {
+      "id": "who_2020_01_05",
+      "date": "2020-01-05",
+      "as_of": "2020-01-03",
+      "text": "44 cases of pneumonia of unknown cause in Wuhan, 11 severe; no evidence of significant human-to-human transmission reported at that time.",
+      "source": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229",
+      "archive_verified": false
+    },
+    {
+      "id": "ecdc_2020_01_09",
+      "date": "2020-01-09",
+      "as_of": "2019-12-31/2020-01-05",
+      "text": "59 possibly associated cases; importation to EU assessed as low but not excluded.",
+      "source": "https://www.ecdc.europa.eu/en/publications-data/pneumonia-cases-possibly-associated-novel-coronavirus-wuhan-china",
+      "archive_verified": false
+    },
+    {
+      "id": "who_2020_01_12",
+      "date": "2020-01-12",
+      "text": "41 confirmed cases and one death; genetic sequence shared on 12 January.",
+      "source": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON233/",
+      "archive_verified": false,
+      "warning": "Current WHO page title contains anachronistic COVID-19; never pass title or current page to analyst."
+    },
+    {
+      "id": "who_2020_01_14",
+      "date": "2020-01-14",
+      "text": "WHO reported a confirmed imported case in Thailand, reported 13 January.",
+      "source": "https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON234",
+      "archive_verified": false
+    }
+  ],
+  "market_quarantine": [
+    {
+      "series": "SP500",
+      "date": "2020-01-13",
+      "value": 3288.13,
+      "audit_status": "unverified"
+    },
+    {
+      "series": "SP500",
+      "date": "2020-01-14",
+      "value": 3283.15,
+      "audit_status": "indirectly_confirmed"
+    },
+    {
+      "series": "SP500",
+      "date": "2020-01-15",
+      "value": 3289.29,
+      "audit_status": "secondary_source_confirmed"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-13",
+      "value": 12.32,
+      "audit_status": "unverified"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-14",
+      "value": 12.39,
+      "audit_status": "unverified"
+    },
+    {
+      "series": "VIXCLS",
+      "date": "2020-01-15",
+      "value": 12.42,
+      "audit_status": "unverified"
+    }
+  ],
+  "hard_gates": [
+    "No analyst packet may be built from this file until archived source snapshots dated before cutoff are verified.",
+    "Do not include market_quarantine in blind packet.",
+    "A daily close is not necessarily available via a specific provider immediately after close; prove availability.",
+    "Current website titles and retrospectively edited documents prohibited.",
+    "Keep event outcomes, post-cutoff prices and previous feedback evaluator-only."
+  ]
+}
