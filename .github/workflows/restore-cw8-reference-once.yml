@@ -1,73 +1,12 @@
-name: One-time restore verified CW8 reference (no checkout or pip)
+name: Historical reference restored - one-time workflow closed
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/restore-cw8-reference-once.yml'
   workflow_dispatch:
 permissions:
-  contents: write
-  actions: read
+  contents: read
 jobs:
-  restore:
+  verified:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 1
     steps:
-      - name: Download archived reference using runner GitHub CLI (no checkout, no pip)
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh run download 41193734641 -R Djohey/DjoFin -n DjoFin_Retests_Ablation_Python-3.11 -D restored
-      - name: Recover verified CSV and provenance from existing GitHub artifact
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPOSITORY: ${{ github.repository }}
-        run: |
-          python - <<'PY'
-          import base64
-          import hashlib
-          import json
-          import os
-          import urllib.request
-
-          repo = os.environ["GH_REPOSITORY"]
-          token = os.environ["GH_TOKEN"]
-          assert repo == "Djohey/DjoFin", "Wrong repository"
-          artifact_id = 13039987659
-          expected = "26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454"
-          csv_name = "CW8_PA_2020-01-01_2025-01-01.csv"
-          metadata_name = "CW8_PA_2020-01-01_2025-01-01.json"
-          def api(url, *, data=None, method=None):
-              headers = {
-                  "Authorization": "Bearer " + token,
-                  "Accept": "application/vnd.github+json",
-                  "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "DjoFin-reference-restorer/1",
-              }
-              if data is not None:
-                  headers["Content-Type"] = "application/json"
-              req = urllib.request.Request(url, data=data, headers=headers, method=method)
-              with urllib.request.urlopen(req, timeout=40) as response:
-                  return response.read()
-
-          from pathlib import Path
-          csv = Path("restored/donnees", csv_name).read_bytes()
-          metadata = Path("restored/donnees", metadata_name).read_bytes()
-          digest = hashlib.sha256(csv).hexdigest()
-          assert digest == expected, "Reference CSV hash mismatch"
-          meta = json.loads(metadata)
-          assert meta["csv_sha256"] == expected
-          assert meta["ticker"] == "CW8.PA"
-          assert meta["observation_count"] == 1283
-          assert meta["currency"] == "EUR"
-          assert meta["source"].startswith("yfinance Yahoo Finance")
-          assert len(csv) == 49397, "Unexpected reference size"
-          for name, content in ((csv_name,csv),(metadata_name,metadata)):
-              path = "data/reference/" + name
-              url = f"https://api.github.com/repos/{repo}/contents/{path}"
-              # Fail closed if path already exists: never overwrite immutable reference.
-              payload = json.dumps({"message":"data: preserve verified CW8 2020-2024 historical reference",
-                  "content":base64.b64encode(content).decode("ascii"),"branch":"main"}).encode()
-              api(url,data=payload,method="PUT")
-              print("Preserved",path,"bytes",len(content))
-          print("VERIFIED_CW8_SHA256",digest)
-          PY
+      - name: Restoration completed
+        run: echo "CW8 reference already restored on main; immutable CSV hash 26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454"
