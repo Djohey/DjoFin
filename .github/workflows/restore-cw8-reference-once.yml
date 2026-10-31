@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Download archived reference using runner GitHub CLI (no checkout, no pip)\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: gh run download 41193734641 -n DjoFin_Retests_Ablation_Python-3.11 -D restored\n      - name: Recover verified CSV and provenance from existing GitHub artifact
+      - name: Download archived reference using runner GitHub CLI (no checkout, no pip)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 41193734641 -n DjoFin_Retests_Ablation_Python-3.11 -D restored
+      - name: Recover verified CSV and provenance from existing GitHub artifact
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -21,11 +25,9 @@ jobs:
           python - <<'PY'
           import base64
           import hashlib
-          import io
           import json
           import os
           import urllib.request
-          import zipfile
 
           repo = os.environ["GH_REPOSITORY"]
           token = os.environ["GH_TOKEN"]
@@ -47,10 +49,9 @@ jobs:
               with urllib.request.urlopen(req, timeout=40) as response:
                   return response.read()
 
-          zip_bytes = api(f"https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}/zip")
-          with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
-              csv = z.read("donnees/" + csv_name)
-              metadata = z.read("donnees/" + metadata_name)
+          from pathlib import Path
+          csv = Path("restored/donnees", csv_name).read_bytes()
+          metadata = Path("restored/donnees", metadata_name).read_bytes()
           digest = hashlib.sha256(csv).hexdigest()
           assert digest == expected, "Reference CSV hash mismatch"
           meta = json.loads(metadata)
