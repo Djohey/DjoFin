@@ -20,7 +20,7 @@ def main():
           "dates": ["2026-10-30"]}],
         snapshot_sha256="a"*64, ticker="CW8.PA",
         as_of_utc="2026-10-31T10:00:00Z", snapshot_dates=["2026-10-30"])
-    prepared = prepare_gemini_payload(request, model="gemini-2.5-flash-lite")
+    prepared = prepare_gemini_payload(request, model="gemini-2.5-flash")
     # Free-tier confirmation must be performed by the owner in AI Studio.
     # Never send requests with this script while billing status is uncertain.
     if os.getenv("DJOFIN_FREE_TIER_CONFIRMED") != "YES":
