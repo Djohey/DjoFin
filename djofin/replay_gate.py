@@ -11,7 +11,7 @@ import re
 class ReplayGateError(ValueError):
     pass
 
-FORBIDDEN = re.compile(r"\\b(?:covid[- ]?19|sars[- ]?cov[- ]?2|omicron|sputnik\\s*v)\\b", re.I)
+FORBIDDEN = re.compile(r"\b(?:covid[- ]?19|sars[- ]?cov[- ]?2|omicron|sputnik\s*v)\b", re.I)
 FIELDS = frozenset({"source_id", "published_utc", "text", "archive_captured_utc", "archive_sha256"})
 
 def utc(value):
