@@ -30,8 +30,8 @@ class ConnectorTests(unittest.TestCase):
             "DJOFIN_AI_ENDPOINT":"https://api.example.org/v1/chat/completions",
             "DJOFIN_AI_API_KEY":"secret-test",
             "DJOFIN_AI_MODEL":"test-model",
-            "DJOFIN_AI_INPUT_USD_PER_M":"0.1",
-            "DJOFIN_AI_OUTPUT_USD_PER_M":"0.2",
+            "DJOFIN_AI_INPUT_USD_PER_M":"0",
+            "DJOFIN_AI_OUTPUT_USD_PER_M":"0",
         }
     def test_disabled_by_default(self):
         with patch.dict(os.environ, {"DJOFIN_AI_ENABLED":"0"}):
@@ -53,7 +53,7 @@ class ConnectorTests(unittest.TestCase):
             self.assertNotIn("Cause unknown",log)
     def test_preflight_budget_rejects_expensive_model(self):
         with patch.dict(os.environ,{**self.env,"DJOFIN_AI_INPUT_USD_PER_M":"1000"}):
-            with self.assertRaisesRegex(ConnectorError,"exceeds cap"):
+            with self.assertRaisesRegex(ConnectorError,"Zero-dollar budget"):
                 run_analysis(self.req,transport=lambda _: self.fail("network called"))
     def test_rejects_insecure_endpoint(self):
         with patch.dict(os.environ,{**self.env,"DJOFIN_AI_ENDPOINT":"http://localhost:8080"}):
