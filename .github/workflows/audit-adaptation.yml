@@ -21,10 +21,16 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Valider les tests
         run: python -m unittest discover -s tests -v
-      - name: Installer la source historique
-        run: python -m pip install 'yfinance>=0.2.50,<2'
-      - name: Récupérer les cours
-        run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out sortie/donnees
+      - name: Charger le jeu de donnees fige (audit de reference)
+        uses: actions/download-artifact@v4
+        with:
+          name: DjoFin_Retests_Ablation_Python-3.11
+          run-id: 41193734641
+          github-token: ${{ github.token }}
+          path: sortie/
+      - name: Verifier empreinte independante du CSV
+        run: |
+          python -c "from pathlib import Path; import hashlib; p=Path('sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv'); actual=hashlib.sha256(p.read_bytes()).hexdigest(); expected='26f29cd7f65e1c5c45bf6d81c519c0bd3ab8286a761470bdab33d8a1092b7454'; print('SHA256:',actual); assert actual==expected, 'Donnees historiques modifiees'"
       - name: Produire les résultats et le dossier audit
         run: |
           python -m scripts.audit_adaptation --csv sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv --metadata sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json --sortie sortie/audit_adaptation.md
