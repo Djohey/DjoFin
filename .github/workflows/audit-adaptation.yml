@@ -1,0 +1,31 @@
+name: Retests et dossier audit DjoFin
+on:
+  push:
+    branches: [simulation-p0]
+    paths:
+      - '.github/workflows/audit-adaptation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Valider les tests
+        run: python -m unittest discover -s tests -v
+      - name: Installer la source historique
+        run: python -m pip install 'yfinance>=0.2.50,<2'
+      - name: Récupérer les cours
+        run: python -m scripts.freeze_etf --ticker CW8.PA --start 2020-01-01 --end 2025-01-01 --out sortie/donnees
+      - name: Produire les résultats et le dossier audit
+        run: |
+          python -m scripts.audit_adaptation --csv sortie/donnees/CW8_PA_2020-01-01_2025-01-01.csv --metadata sortie/donnees/CW8_PA_2020-01-01_2025-01-01.json --sortie sortie/audit_adaptation.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DjoFin_Retests_Dossier_Audit
+          path: sortie/
+          if-no-files-found: error
